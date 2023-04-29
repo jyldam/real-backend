@@ -12,6 +12,10 @@ return new class extends Migration {
     {
         Schema::create('housings', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(\App\Models\HousingCategory::class)
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->integer('price')->index();
             $table->foreignIdFor(\App\Models\Employee::class)
                 ->constrained()

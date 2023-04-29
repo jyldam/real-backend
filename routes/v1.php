@@ -5,8 +5,12 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', 'AuthController@create');
 
 Route::get('housing-category', 'HousingCategoryController@indexGuest');
+Route::get('housing-category/{category}', 'HousingCategoryController@show');
 
 Route::get('housing', 'HousingController@index');
+Route::get('housing/{housing}', 'HousingController@show');
+
+Route::get('giving-type', 'GivingTypeController@index');
 
 Route::middleware('auth:api')
     ->prefix('auth')
@@ -20,4 +24,7 @@ Route::middleware('auth:api')
         Route::post('housing-category', 'HousingCategoryController@create');
         Route::put('housing-category/{category}', 'HousingCategoryController@update');
         Route::delete('housing-category/{category}', 'HousingCategoryController@destroy');
+
+        Route::get('characteristic-category/{housingCategory}', 'CharacteristicCategoryController@index');
+        Route::get('characteristic/{category}', 'CharacteristicController@index');
     });

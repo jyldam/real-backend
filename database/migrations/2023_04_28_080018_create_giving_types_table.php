@@ -10,12 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('characteristics', function (Blueprint $table) {
+        Schema::create('giving_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\CharacteristicCategory::class)
-                ->constrained();
-            $table->string('name', 15);
-            $table->string('label', 50);
+            $table->string('name', 10);
+            $table->string('slug', 10);
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('characteristics');
+        Schema::dropIfExists('giving_types');
     }
 };

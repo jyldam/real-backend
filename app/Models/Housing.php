@@ -20,6 +20,7 @@ class Housing extends Model
 
     protected $fillable = [
         'price',
+        'housing_category_id',
         'employee_id',
         'region_id',
         'address',
@@ -35,5 +36,10 @@ class Housing extends Model
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function housingCategory():BelongsTo
+    {
+        return $this->belongsTo(HousingCategory::class);
     }
 }

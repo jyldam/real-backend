@@ -6,7 +6,11 @@ namespace Database\Seeders;
 use App\Models\Region;
 use App\Models\Housing;
 use App\Models\Employee;
+use App\Models\GivingType;
+use App\Models\Characteristic;
 use Illuminate\Database\Seeder;
+use App\Models\HousingCategory;
+use App\Models\CharacteristicCategory;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,37 +27,86 @@ class DatabaseSeeder extends Seeder
             'name' => 'Алматы',
         ]);
         $today = today();
+        $category = HousingCategory::query()->create([
+            'name'      => 'Квартиры',
+            'mesh_name' => 'квартиры',
+            'sort'      => 0,
+            'disabled'  => false,
+        ]);
+        HousingCategory::query()->create([
+            'name'      => 'Бутики, сараи',
+            'mesh_name' => 'бутиков, сараев',
+            'sort'      => 1,
+            'disabled'  => false,
+        ]);
+        $characteristicCategory = CharacteristicCategory::query()->create([
+            'name'                => 'О квартире',
+            'housing_category_id' => $category->id,
+        ]);
+        Characteristic::query()->insert([
+            [
+                'characteristic_category_id' => $characteristicCategory->id,
+                'name'                       => 'price',
+                'label'                      => 'Цена',
+                'created_at'                 => $today,
+                'updated_at'                 => $today,
+            ],
+            [
+                'characteristic_category_id' => $characteristicCategory->id,
+                'name'                       => 'address',
+                'label'                      => 'Адрес',
+                'created_at'                 => $today,
+                'updated_at'                 => $today,
+            ],
+            [
+                'characteristic_category_id' => $characteristicCategory->id,
+                'name'                       => 'quadrature',
+                'label'                      => 'Квадратура',
+                'created_at'                 => $today,
+                'updated_at'                 => $today,
+            ],
+            [
+                'characteristic_category_id' => $characteristicCategory->id,
+                'name'                       => 'rooms_count',
+                'label'                      => 'Количество комнат',
+                'created_at'                 => $today,
+                'updated_at'                 => $today,
+            ],
+            [
+                'characteristic_category_id' => $characteristicCategory->id,
+                'name'                       => 'floor',
+                'label'                      => 'Этажность',
+                'created_at'                 => $today,
+                'updated_at'                 => $today,
+            ],
+        ]);
 
-        Housing::query()->insert([
+        for ($i = 0; $i < 1000; $i++) {
+            Housing::query()->insert([
+                'price'               => 200_000 + $i,
+                'housing_category_id' => $category->id,
+                'employee_id'         => $employee->id,
+                'region_id'           => $region->id,
+                'address'             => $i . $i . 'Test address 137',
+                'giving_type'         => Housing::GIVING_TYPE_RENT,
+                'status'              => Housing::STATUS_PUBLISHED,
+                'created_at'          => $today,
+                'updated_at'          => $today,
+            ]);
+        }
+
+        GivingType::query()->insert([
             [
-                'price'       => 200_000,
-                'employee_id' => $employee->id,
-                'region_id'   => $region->id,
-                'address'     => 'Test address 137',
-                'giving_type' => Housing::GIVING_TYPE_RENT,
-                'status'      => Housing::STATUS_PUBLISHED,
-                'created_at'  => $today,
-                'updated_at'  => $today,
+                'name'       => 'Купить',
+                'slug'       => 'buy',
+                'created_at' => $today,
+                'updated_at' => $today,
             ],
             [
-                'price'       => 250_000,
-                'employee_id' => $employee->id,
-                'region_id'   => $region->id,
-                'address'     => 'Test address 12',
-                'giving_type' => Housing::GIVING_TYPE_RENT,
-                'status'      => Housing::STATUS_PUBLISHED,
-                'created_at'  => $today,
-                'updated_at'  => $today,
-            ],
-            [
-                'price'       => 300_000,
-                'employee_id' => $employee->id,
-                'region_id'   => $region->id,
-                'address'     => 'Test address 99',
-                'giving_type' => Housing::GIVING_TYPE_RENT,
-                'status'      => Housing::STATUS_PUBLISHED,
-                'created_at'  => $today,
-                'updated_at'  => $today,
+                'name'       => 'Снять',
+                'slug'       => 'rent',
+                'created_at' => $today,
+                'updated_at' => $today,
             ],
         ]);
 

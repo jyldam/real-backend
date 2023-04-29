@@ -29,6 +29,7 @@ class HousingResource extends JsonResource
                 'image' => 'https://cdn.esoft.digital/240320/cluster/profiles/df/f73c85f35646a294dd4bcc7078c0e3174e4b62df.jpeg',
                 'phone' => $this->employee->user->phone,
             ],
+            'category' => $this->housingCategory->name,
         ];
     }
 }
