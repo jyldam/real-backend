@@ -34,8 +34,8 @@ class DatabaseSeeder extends Seeder
             'disabled'  => false,
         ]);
         HousingCategory::query()->create([
-            'name'      => 'Бутики, сараи',
-            'mesh_name' => 'бутиков, сараев',
+            'name'      => 'Дома и участки',
+            'mesh_name' => 'домов и участков',
             'sort'      => 1,
             'disabled'  => false,
         ]);
@@ -46,8 +46,25 @@ class DatabaseSeeder extends Seeder
         Characteristic::query()->insert([
             [
                 'characteristic_category_id' => $characteristicCategory->id,
-                'name'                       => 'price',
-                'label'                      => 'Цена',
+                'name'                       => 'floor',
+                'label'                      => 'Этажность',
+                'sort'                       => 4,
+                'created_at'                 => $today,
+                'updated_at'                 => $today,
+            ],
+            [
+                'characteristic_category_id' => $characteristicCategory->id,
+                'name'                       => 'rooms_count',
+                'label'                      => 'Комнатность',
+                'sort'                       => 0,
+                'created_at'                 => $today,
+                'updated_at'                 => $today,
+            ],
+            [
+                'characteristic_category_id' => $characteristicCategory->id,
+                'name'                       => 'quadrature',
+                'label'                      => 'Площадь',
+                'sort'                       => 2,
                 'created_at'                 => $today,
                 'updated_at'                 => $today,
             ],
@@ -55,27 +72,7 @@ class DatabaseSeeder extends Seeder
                 'characteristic_category_id' => $characteristicCategory->id,
                 'name'                       => 'address',
                 'label'                      => 'Адрес',
-                'created_at'                 => $today,
-                'updated_at'                 => $today,
-            ],
-            [
-                'characteristic_category_id' => $characteristicCategory->id,
-                'name'                       => 'quadrature',
-                'label'                      => 'Квадратура',
-                'created_at'                 => $today,
-                'updated_at'                 => $today,
-            ],
-            [
-                'characteristic_category_id' => $characteristicCategory->id,
-                'name'                       => 'rooms_count',
-                'label'                      => 'Количество комнат',
-                'created_at'                 => $today,
-                'updated_at'                 => $today,
-            ],
-            [
-                'characteristic_category_id' => $characteristicCategory->id,
-                'name'                       => 'floor',
-                'label'                      => 'Этажность',
+                'sort'                       => 3,
                 'created_at'                 => $today,
                 'updated_at'                 => $today,
             ],

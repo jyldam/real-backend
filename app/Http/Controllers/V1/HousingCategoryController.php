@@ -10,14 +10,26 @@ use App\Http\Resources\V1\HousingCategoryResource;
 
 class HousingCategoryController extends Controller
 {
-    public function indexGuest(): JsonResponse
+    public function indexGuest()
     {
         $categories = HousingCategory::query()
+            ->with([
+                'characteristicCategories' => fn($query) => $query->with([
+                    'characteristics' => fn($query) => $query->select([
+                        'id',
+                        'characteristic_category_id',
+                        'name',
+                        'label',
+                        'sort',
+                    ])->orderBy('sort'),
+                ])->select(['id', 'housing_category_id']),
+            ])
             ->select(['id', 'name', 'mesh_name'])
             ->where('disabled', false)
             ->orderBy('sort')
             ->get();
-        return response()->json($categories);
+
+        return HousingCategoryResource::collection($categories);
     }
 
     public function indexAuthenticated(): JsonResponse
@@ -41,7 +53,8 @@ class HousingCategoryController extends Controller
                             'characteristic_category_id',
                             'name',
                             'label',
-                        ]),
+                            'sort',
+                        ])->orderBy('sort'),
                     ])->select(['id', 'housing_category_id']),
                 ])
                 ->makeHidden([

@@ -16,6 +16,7 @@ return new class extends Migration {
                 ->constrained();
             $table->string('name', 15);
             $table->string('label', 50);
+            $table->integer('sort')->index();
             $table->timestamps();
         });
     }

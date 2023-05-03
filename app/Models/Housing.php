@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Housing extends Model
 {
@@ -38,8 +39,14 @@ class Housing extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function housingCategory():BelongsTo
+    public function housingCategory(): BelongsTo
     {
         return $this->belongsTo(HousingCategory::class);
+    }
+
+    public function characteristics(): BelongsToMany
+    {
+        return $this->belongsToMany(Characteristic::class, 'housing_characteristics')
+            ->withPivot('value');
     }
 }
