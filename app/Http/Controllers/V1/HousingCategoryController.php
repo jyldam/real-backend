@@ -5,31 +5,21 @@ namespace App\Http\Controllers\V1;
 use App\Models\HousingCategory;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Services\HousingCategoryService;
 use App\Http\Requests\V1\HousingCategoryRequest;
 use App\Http\Resources\V1\HousingCategoryResource;
 
 class HousingCategoryController extends Controller
 {
+    public function __construct(
+        private HousingCategoryService $housingCategoryService
+    )
+    {
+    }
+
     public function indexGuest()
     {
-        $categories = HousingCategory::query()
-            ->with([
-                'characteristicCategories' => fn($query) => $query->with([
-                    'characteristics' => fn($query) => $query->select([
-                        'id',
-                        'characteristic_category_id',
-                        'name',
-                        'label',
-                        'sort',
-                    ])->orderBy('sort'),
-                ])->select(['id', 'housing_category_id']),
-            ])
-            ->select(['id', 'name', 'mesh_name'])
-            ->where('disabled', false)
-            ->orderBy('sort')
-            ->get();
-
-        return HousingCategoryResource::collection($categories);
+        return HousingCategoryResource::collection($this->housingCategoryService->getActive());
     }
 
     public function indexAuthenticated(): JsonResponse

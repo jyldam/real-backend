@@ -10,13 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('housing_categories', function (Blueprint $table) {
+        Schema::create('housing_assets', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 30);
-            $table->string('mesh_name', 30);
-            $table->boolean('disabled')->index();
-            $table->integer('sort');
-            $table->json('preview_characteristics');
+            $table->foreignIdFor(\App\Models\Housing::class)
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+            $table->string('url');
+            $table->integer('type')->index();
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('housing_categories');
+        Schema::dropIfExists('housing_assets');
     }
 };

@@ -15,14 +15,11 @@ class HousingCategoryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'              => $this->id,
-            'name'            => $this->name,
-            'mesh_name'       => $this->mesh_name,
-            'characteristics' => $this->characteristicCategories
-                ->flatMap
-                ->characteristics
-                ->map
-                ->only(['id', 'label', 'name']),
+            'id'                      => $this->id,
+            'name'                    => $this->name,
+            'mesh_name'               => $this->mesh_name,
+            'preview_characteristics' => $this->preview_characteristics,
+            'characteristics'         => CharacteristicResource::collection($this->characteristicCategories),
         ];
     }
 }

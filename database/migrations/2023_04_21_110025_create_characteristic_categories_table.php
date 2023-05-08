@@ -17,6 +17,10 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+            $table->foreignId('parent_id')
+                ->nullable()
+                ->constrained('characteristic_categories')
+                ->nullOnDelete();
             $table->timestamps();
         });
     }
