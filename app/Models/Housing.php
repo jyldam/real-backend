@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -54,5 +55,10 @@ class Housing extends Model
     public function givingTypeSlug(): HasOne
     {
         return $this->hasOne(GivingType::class, 'id', 'giving_type');
+    }
+
+    public function housingAssets(): HasMany
+    {
+        return $this->hasMany(HousingAsset::class);
     }
 }

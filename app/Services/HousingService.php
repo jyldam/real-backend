@@ -12,9 +12,10 @@ class HousingService
             ->with([
                 'region',
                 'employee.user',
+                'givingTypeSlug',
+                'housingAssets',
                 'housingCategory',
                 'characteristics' => fn($query) => $query->with('characteristicCategory')->orderBy('sort'),
-                'givingTypeSlug',
             ])
             ->where('status', Housing::STATUS_PUBLISHED)
             ->when(@$where['giving_type'], fn($query) => $query->where('giving_type', $where['giving_type']))

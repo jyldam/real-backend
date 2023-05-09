@@ -17,11 +17,11 @@ class HousingResource extends JsonResource
         return [
             'id'              => $this->id,
             'title'           => '3-комнатная квартира',
-            'images'          => [
-                'https://images.unsplash.com/photo-1580757468214-c73f7062a5cb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8MTYlM0E5fGVufDB8fDB8fA%3D%3D&w=1000&q=80',
-                'https://images.unsplash.com/photo-1558637845-c8b7ead71a3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8MTYlM0E5fGVufDB8fDB8fA%3D%3D&w=1000&q=80',
-                'https://images.unsplash.com/photo-1603486002664-a7319421e133?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8MTYlM0E5fGVufDB8fDB8fA%3D%3D&w=1000&q=80',
-            ],
+            'images'          => $this->housingAssets->map(fn($housingAsset) => [
+                'id'   => $housingAsset['id'],
+                'url'  => asset($housingAsset['url']),
+                'type' => $housingAsset['type'],
+            ]),
             'price'           => $this->price,
             'address'         => $this->address,
             'region'          => $this->region->name,
