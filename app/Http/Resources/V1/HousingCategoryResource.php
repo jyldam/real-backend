@@ -19,7 +19,11 @@ class HousingCategoryResource extends JsonResource
             'name'                    => $this->name,
             'mesh_name'               => $this->mesh_name,
             'preview_characteristics' => $this->preview_characteristics,
-            'characteristics'         => CharacteristicResource::collection($this->characteristicCategories),
+            'characteristics'         => $this->characteristicCategories
+                ->flatMap
+                ->characteristics
+                ->map
+                ->only(['id', 'label', 'name']),
         ];
     }
 }

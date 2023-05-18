@@ -31,6 +31,16 @@ class Housing extends Model
         'status',
     ];
 
+    public static function allStatuses()
+    {
+        return [
+            self::STATUS_CREATED,
+            self::STATUS_ON_MODERATION,
+            self::STATUS_PUBLISHED,
+            self::STATUS_ARCHIVED,
+        ];
+    }
+
     public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class);

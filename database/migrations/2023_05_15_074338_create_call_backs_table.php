@@ -10,15 +10,15 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('housing_characteristics', function (Blueprint $table) {
+        Schema::create('call_backs', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Characteristic::class)
+            $table->foreignIdFor(\App\Models\Employee::class)
                 ->constrained()
+                ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->foreignIdFor(\App\Models\Housing::class)
-                ->constrained()
-                ->cascadeOnDelete();
-            $table->json('value');
+            $table->string('phone', 10);
+            $table->json('extra');
+            $table->integer('type');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('housing_characteristics');
+        Schema::dropIfExists('call_backs');
     }
 };

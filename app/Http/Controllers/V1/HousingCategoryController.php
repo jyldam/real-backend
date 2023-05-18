@@ -5,72 +5,36 @@ namespace App\Http\Controllers\V1;
 use App\Models\HousingCategory;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Services\HousingCategoryService;
-use App\Http\Requests\V1\HousingCategoryRequest;
+use App\Services\V1\HousingCategoryService;
 use App\Http\Resources\V1\HousingCategoryResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class HousingCategoryController extends Controller
 {
     public function __construct(
-        private HousingCategoryService $housingCategoryService
-    )
-    {
-    }
+        private readonly HousingCategoryService $housingCategoryService
+    ) {}
 
-    public function indexGuest()
+    public function index(): AnonymousResourceCollection
     {
         return HousingCategoryResource::collection($this->housingCategoryService->getActive());
     }
 
-    public function indexAuthenticated(): JsonResponse
-    {
-        $categories = HousingCategory::query()->orderBy('sort')->get();
-        return response()->json($categories);
-    }
-
-    public function show(HousingCategory $category)
+    public function show(HousingCategory $category): JsonResponse
     {
         if ($category->disabled) {
             abort(404);
         }
 
-        return new HousingCategoryResource(
-            $category
-                ->load([
-                    'characteristicCategories' => fn($query) => $query->with([
-                        'characteristics' => fn($query) => $query->select([
-                            'id',
-                            'characteristic_category_id',
-                            'name',
-                            'label',
-                            'sort',
-                        ])->orderBy('sort'),
-                    ])->select(['id', 'housing_category_id']),
-                ])
-                ->makeHidden([
-                    'disabled',
-                    'created_at',
-                    'updated_at',
-                    'sort',
-                ])
-        );
-    }
+        $category
+            ->load(['characteristicCategories.characteristics' => fn($query) => $query->orderBy('sort')])
+            ->makeHidden([
+                'disabled',
+                'created_at',
+                'updated_at',
+                'sort',
+            ]);
 
-    public function create(HousingCategoryRequest $request): JsonResponse
-    {
-        $category = HousingCategory::query()->create($request->validated());
-        return response()->json($category);
-    }
-
-    public function update(HousingCategoryRequest $request, HousingCategory $category): JsonResponse
-    {
-        $category->update($request->validated());
-        return response()->json($category);
-    }
-
-    public function destroy(HousingCategory $category): JsonResponse
-    {
-        $category->delete();
-        return response()->json($category);
+        return response()->json(new HousingCategoryResource($category));
     }
 }

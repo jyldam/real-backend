@@ -3,30 +3,36 @@
 namespace App\Http\Controllers\V1;
 
 use App\Models\Housing;
-use App\Services\HousingService;
+use Illuminate\Http\JsonResponse;
+use App\Data\V1\HousingCreateData;
+use App\Services\V1\HousingService;
 use App\Http\Controllers\Controller;
+use App\Data\V1\HousingFindManyData;
 use App\Http\Resources\V1\HousingResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class HousingController extends Controller
 {
     public function __construct(
-        private HousingService $housingService
-    )
+        private readonly HousingService $housingService
+    ) {}
+
+    public function index(HousingFindManyData $data): AnonymousResourceCollection
     {
+        $housings = $this->housingService->findMany($data);
+        return HousingResource::collection($housings);
     }
 
-    public function index()
+    public function show(Housing $housing): JsonResponse
     {
-        return HousingResource::collection(
-            $this->housingService->getPublished([
-                'giving_type' => request('giving_type'),
-                'category_id' => request('category_id'),
-            ], request('per_page'))
-        );
+        abort_if(!employee()->isAdmin() && $housing->employee_id !== employee()->id, 403);
+        $housing->load(['region', 'employee.user', 'housingCategory']);
+        return response()->json(new HousingResource($housing));
     }
 
-    public function show(Housing $housing)
+    public function store(HousingCreateData $data): JsonResponse
     {
-        return new HousingResource($housing->load(['region', 'employee.user', 'housingCategory']));
+        $this->housingService->create($data);
+        return response()->json('Объявление успешно создано');
     }
 }

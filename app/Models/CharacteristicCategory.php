@@ -11,6 +11,18 @@ class CharacteristicCategory extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'mesh_name',
+        'disabled',
+        'sort',
+        'preview_characteristics',
+    ];
+
+    protected $casts = [
+        'preview_characteristics' => 'collection',
+    ];
+
     public function characteristics(): HasMany
     {
         return $this->hasMany(Characteristic::class);

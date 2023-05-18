@@ -17,6 +17,7 @@ return new class extends Migration {
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
             $table->string('avatar_url');
+            $table->integer('type');
             $table->timestamps();
         });
     }

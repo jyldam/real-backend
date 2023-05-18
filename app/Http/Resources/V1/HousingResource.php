@@ -25,15 +25,11 @@ class HousingResource extends JsonResource
             'price'           => $this->price,
             'address'         => $this->address,
             'region'          => $this->region->name,
-            'employee'        => [
-                'name'  => $this->employee->user->name,
-                'image' => asset($this->employee->avatar_url),
-                'phone' => $this->employee->user->phone,
-            ],
+            'employee'        => new EmployeeResource($this->employee),
             'category'        => [
                 'id'                      => $this->housingCategory->id,
                 'name'                    => $this->housingCategory->name,
-                'preview_characteristics' => $this->housingCategory->preview_characteristics,
+                'preview_characteristics' => json_decode($this->housingCategory->preview_characteristics),
             ],
             'giving_type'     => $this->givingTypeSlug?->slug,
             'characteristics' => CharacteristicResource::collection($this->characteristics)

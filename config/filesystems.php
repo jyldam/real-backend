@@ -64,6 +64,14 @@ return [
             'throw'      => false,
         ],
 
+        'housing_assets' => [
+            'driver'     => 'local',
+            'root'       => storage_path('app/public/housing_assets'),
+            'url'        => env('APP_URL') . '/storage/housing_assets',
+            'visibility' => 'public',
+            'throw'      => false,
+        ],
+
     ],
 
     /*

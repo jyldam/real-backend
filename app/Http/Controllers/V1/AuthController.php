@@ -2,33 +2,39 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Models\Employee;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\EmployeeResource;
 
 class AuthController extends Controller
 {
-    public function create()
+    public function store(): JsonResponse
     {
         $credentials = request(['phone', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
-            abort(422);
+            abort(400, 'Authentication failed');
         }
 
         return $this->respondWithToken($token);
     }
 
-    public function destroy()
+    public function destroy(): JsonResponse
     {
         auth()->logout();
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    public function me()
+    public function me(): JsonResponse
     {
-        return auth()->user();
+        $employee = Employee::with('user')
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+        return response()->json(new EmployeeResource($employee));
     }
 
-    private function respondWithToken(string $token)
+    private function respondWithToken(string $token): JsonResponse
     {
         return response()->json([
             'access_token' => $token,

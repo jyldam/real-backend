@@ -10,6 +10,13 @@ class Characteristic extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'characteristic_category_id',
+        'name',
+        'label',
+        'sort',
+    ];
+
     public function characteristicCategory(): BelongsTo
     {
         return $this->belongsTo(CharacteristicCategory::class);

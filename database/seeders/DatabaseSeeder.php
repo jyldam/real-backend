@@ -28,6 +28,13 @@ class DatabaseSeeder extends Seeder
         $employee = Employee::query()->create([
             'user_id'    => $user->id,
             'avatar_url' => '/storage/avatars/58464833.jpg',
+            'type'       => Employee::TYPE_ADMIN,
+        ]);
+        $user2 = \App\Models\User::factory()->create();
+        Employee::query()->create([
+            'user_id'    => $user2->id,
+            'avatar_url' => '/storage/avatars/58464833.jpg',
+            'type'       => Employee::TYPE_REALTOR,
         ]);
         $region = Region::query()->create([
             'name' => 'Алматы',
