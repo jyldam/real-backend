@@ -2,6 +2,7 @@
 
 namespace App\Services\V1;
 
+use Throwable;
 use App\Models\User;
 use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
@@ -9,6 +10,7 @@ use App\Data\V1\EmployeeCreateData;
 use Illuminate\Support\Facades\Log;
 use App\Data\V1\EmployeeUpdateData;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,6 +18,9 @@ class EmployeeService
 {
     public function __construct() {}
 
+    /**
+     * @throws Throwable
+     */
     public function create(EmployeeCreateData $data): void
     {
         $disk = Storage::disk('avatars');
@@ -47,6 +52,9 @@ class EmployeeService
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     public function update(EmployeeUpdateData $data, Employee $employee): void
     {
         $disk = Storage::disk('avatars');
@@ -64,8 +72,10 @@ class EmployeeService
                 $columns['password'] = Hash::make($data->password);
             }
 
+            $authenticatedEmployee = Auth::user()->employee;
+
             $employee->update([
-                'type' => auth()->user()->employee->id !== $employee->id && auth()->user()->employee->isAdmin()
+                'type' => $authenticatedEmployee->id !== $employee->id && $authenticatedEmployee->isAdmin()
                     ? $data->type
                     : $employee->type,
             ]);

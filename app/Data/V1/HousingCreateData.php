@@ -31,9 +31,11 @@ class HousingCreateData extends Data
         #[Exists('giving_types', 'id')]
         public int            $givingType,
 
+        /** @var DataCollection<CharacteristicData> */
         #[DataCollectionOf(CharacteristicData::class)]
         public DataCollection $characteristics,
 
+        /** @var DataCollection<AssetData> */
         #[DataCollectionOf(AssetData::class)]
         public DataCollection $assets,
 

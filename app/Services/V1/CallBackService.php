@@ -2,6 +2,7 @@
 
 namespace App\Services\V1;
 
+use Throwable;
 use App\Models\Housing;
 use App\Models\CallBack;
 use App\Models\Employee;
@@ -12,6 +13,9 @@ use Illuminate\Database\QueryException;
 
 class CallBackService
 {
+    /**
+     * @throws Throwable
+     */
     public function createForHousing(CallBackCreateData $data): void
     {
         try {
@@ -37,6 +41,9 @@ class CallBackService
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     public function createForAdmins(CallBackCreateData $data): void
     {
         try {

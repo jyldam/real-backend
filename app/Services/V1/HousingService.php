@@ -2,11 +2,14 @@
 
 namespace App\Services\V1;
 
+use Throwable;
 use App\Models\Housing;
 use Illuminate\Support\Facades\DB;
 use App\Data\V1\HousingCreateData;
+use App\Data\V1\HousingUpdateData;
 use Illuminate\Support\Facades\Log;
 use App\Data\V1\HousingFindManyData;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +20,7 @@ class HousingService
 {
     public function findMany(HousingFindManyData $data): LengthAwarePaginator
     {
-        $employee = auth()->user()?->employee;
+        $employee = Auth::user()?->employee;
         $status = $employee && $data->status
             ? $data->status
             : Housing::STATUS_PUBLISHED;
@@ -73,6 +76,9 @@ class HousingService
             ->paginate($data->perPage ?? 30);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function create(HousingCreateData $data): void
     {
         $disk = Storage::disk('housing_assets');
@@ -82,7 +88,7 @@ class HousingService
 
             // Create housing
             $housing = Housing::query()->create([
-                'employee_id'         => auth()->user()->employee->id,
+                'employee_id'         => Auth::user()->employee->id,
                 'status'              => $data->moderate ? Housing::STATUS_ON_MODERATION : Housing::STATUS_CREATED,
                 'housing_category_id' => $data->housingCategoryId,
                 'price'               => $data->price,
@@ -118,4 +124,6 @@ class HousingService
             throw $exception;
         }
     }
+
+    public function update(HousingUpdateData $data, Housing $housing): void {}
 }

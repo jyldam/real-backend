@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Models\Housing;
 use Illuminate\Http\JsonResponse;
 use App\Data\V1\HousingCreateData;
+use App\Data\V1\HousingUpdateData;
 use App\Services\V1\HousingService;
 use App\Http\Controllers\Controller;
 use App\Data\V1\HousingFindManyData;
@@ -34,5 +35,11 @@ class HousingController extends Controller
     {
         $this->housingService->create($data);
         return response()->json('Объявление успешно создано');
+    }
+
+    public function update(HousingUpdateData $data, Housing $housing)
+    {
+        $this->housingService->update($data, $housing);
+        return response()->json('Объявление успешно обновлено');
     }
 }
