@@ -99,6 +99,7 @@ namespace App\Models{
  * @property int $type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $avatar_file
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Employee admins()
  * @method static \Illuminate\Database\Eloquent\Builder|Employee newModelQuery()
@@ -224,29 +225,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory whereUpdatedAt($value)
  */
 	class HousingCategory extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * App\Models\HousingCharacteristic
- *
- * @property int $id
- * @property int $characteristic_id
- * @property int $housing_id
- * @property mixed $value
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|HousingCharacteristic newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|HousingCharacteristic newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|HousingCharacteristic query()
- * @method static \Illuminate\Database\Eloquent\Builder|HousingCharacteristic whereCharacteristicId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|HousingCharacteristic whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|HousingCharacteristic whereHousingId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|HousingCharacteristic whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|HousingCharacteristic whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|HousingCharacteristic whereValue($value)
- */
-	class HousingCharacteristic extends \Eloquent {}
 }
 
 namespace App\Models{

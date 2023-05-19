@@ -9,7 +9,6 @@ use Spatie\LaravelData\Attributes\Validation\In;
 use Spatie\LaravelData\Attributes\Validation\Min;
 use Spatie\LaravelData\Attributes\Validation\Max;
 use Spatie\LaravelData\Attributes\Validation\Email;
-use Spatie\LaravelData\Attributes\Validation\NotIn;
 use Spatie\LaravelData\Attributes\Validation\Image;
 use Spatie\LaravelData\Attributes\Validation\Unique;
 use Spatie\LaravelData\Attributes\Validation\CurrentPassword;
@@ -30,14 +29,14 @@ class EmployeeUpdateData extends Data
         #[Unique('users', 'email', ignore: new RouteParameterReference('employee', 'id'))]
         public string       $email,
 
-        #[NotIn(Employee::TYPE_ADMIN)]
         #[In(
+            Employee::TYPE_ADMIN,
             Employee::TYPE_REALTOR,
             Employee::TYPE_MODERATOR
         )]
         public int          $type,
 
-        #[CurrentPassword]
+        #[Min(8)]
         public string       $password,
 
         #[Image]
@@ -48,13 +47,6 @@ class EmployeeUpdateData extends Data
     {
         $employee = employee();
         return $employee && ($employee->isAdmin() || $employee->id === request('employee')->id);
-    }
-
-    public static function messages(): array
-    {
-        return [
-            'type.not_in' => 'Создание админа запрещено',
-        ];
     }
 
     public static function attributes(): array

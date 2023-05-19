@@ -10,9 +10,7 @@ use Spatie\LaravelData\Attributes\Validation\Min;
 use Spatie\LaravelData\Attributes\Validation\Max;
 use Spatie\LaravelData\Attributes\Validation\Email;
 use Spatie\LaravelData\Attributes\Validation\Image;
-use Spatie\LaravelData\Attributes\Validation\NotIn;
 use Spatie\LaravelData\Attributes\Validation\Unique;
-use Spatie\LaravelData\Attributes\Validation\CurrentPassword;
 
 class EmployeeCreateData extends Data
 {
@@ -20,27 +18,27 @@ class EmployeeCreateData extends Data
         #[Min(10)]
         #[Max(10)]
         #[Unique('users', 'phone')]
-        public string       $phone,
+        public string        $phone,
 
         #[Min(2)]
-        public string       $name,
+        public string        $name,
 
         #[Email]
         #[Unique('users', 'email')]
-        public string       $email,
+        public string        $email,
 
-        #[CurrentPassword]
-        public string       $password,
+        #[Min(8)]
+        public string        $password,
 
-        #[Image]
-        public UploadedFile $avatar,
-
-        #[NotIn(Employee::TYPE_ADMIN)]
         #[In(
+            Employee::TYPE_ADMIN,
             Employee::TYPE_REALTOR,
             Employee::TYPE_MODERATOR
         )]
-        public int          $type,
+        public int           $type,
+
+        #[Image]
+        public ?UploadedFile $avatar = null,
     ) {}
 
     public static function authorize(): bool
@@ -48,17 +46,13 @@ class EmployeeCreateData extends Data
         return employee()->isAdmin();
     }
 
-    public static function messages(): array
-    {
-        return [
-            'type.not_in' => 'Создание админа запрещено',
-        ];
-    }
-
     public static function attributes(): array
     {
         return [
-            'type' => 'тип',
+            'type'  => 'тип',
+            'phone' => 'телефон',
+            'name'  => 'имя',
+            'email' => 'электронная почта',
         ];
     }
 }

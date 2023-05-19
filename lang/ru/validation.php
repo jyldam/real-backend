@@ -29,6 +29,7 @@ return [
         "array"   => "Поле :attribute должно содержать :min - :max элементов",
     ],
     "confirmed"        => "Поле :attribute не совпадает с подтверждением",
+    'current_password' => 'Пароль неверный',
     "date"             => "Поле :attribute не является датой",
     "date_format"      => "Поле :attribute не соответствует формату :format",
     "different"        => "Поля :attribute и :other должны различаться",

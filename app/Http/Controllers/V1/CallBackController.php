@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V1;
 
+use Throwable;
 use App\Models\CallBack;
 use Illuminate\Http\JsonResponse;
 use App\Data\V1\CallBackCreateData;
@@ -14,6 +15,9 @@ class CallBackController extends Controller
         private readonly CallBackService $callBackService
     ) {}
 
+    /**
+     * @throws Throwable
+     */
     public function store(CallBackCreateData $data): JsonResponse
     {
         switch ($data->type) {

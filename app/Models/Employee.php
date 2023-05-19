@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -51,11 +50,9 @@ class Employee extends Model
         return $this->type === self::TYPE_MODERATOR;
     }
 
-    public function avatarFile(): Attribute
+    public function getAvatarFileAttribute()
     {
-        return new Attribute(
-            get: fn() => last(explode('/', $this->avatar_url))
-        );
+        return last(explode('/', $this->avatar_url));
     }
 
     public function scopeAdmins(Builder $query)

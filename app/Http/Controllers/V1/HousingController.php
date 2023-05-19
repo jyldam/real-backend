@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V1;
 
+use Throwable;
 use App\Models\Housing;
 use Illuminate\Http\JsonResponse;
 use App\Data\V1\HousingCreateData;
@@ -31,15 +32,27 @@ class HousingController extends Controller
         return response()->json(new HousingResource($housing));
     }
 
+    /**
+     * @throws Throwable
+     */
     public function store(HousingCreateData $data): JsonResponse
     {
         $this->housingService->create($data);
         return response()->json('Объявление успешно создано');
     }
 
-    public function update(HousingUpdateData $data, Housing $housing)
+    /**
+     * @throws Throwable
+     */
+    public function update(HousingUpdateData $data, Housing $housing): JsonResponse
     {
         $this->housingService->update($data, $housing);
         return response()->json('Объявление успешно обновлено');
+    }
+
+    public function destroy(Housing $housing): JsonResponse
+    {
+        $this->housingService->delete($housing);
+        return response()->json('Объявление удалено');
     }
 }

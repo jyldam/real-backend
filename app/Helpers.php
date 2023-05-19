@@ -22,3 +22,10 @@ if (!function_exists('checkPolicy')) {
         abort_if($user && !$user->can($ability, [$model, ...$arguments]), 403);
     }
 }
+
+if (!function_exists('maskPhone')) {
+    function maskPhone($phone)
+    {
+        return '+7 (' . substr($phone, 0, 3) . ') ' . substr($phone, 3, 3) . '-' . substr($phone, 6, 2) . '-' . substr($phone, 8, 2);
+    }
+}

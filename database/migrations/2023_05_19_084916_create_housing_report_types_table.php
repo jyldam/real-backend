@@ -10,10 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('giving_types', function (Blueprint $table) {
+        Schema::create('housing_report_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 10);
-            $table->string('slug', 10);
+            $table->string('name', 255);
         });
     }
 
@@ -22,6 +21,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('giving_types');
+        Schema::dropIfExists('housing_report_types');
     }
 };

@@ -106,7 +106,7 @@ class HousingService
 
             // Upload assets
             foreach ($data->assets as $asset) {
-                $fileName = $disk->putFile('', $asset->file);
+                $fileName = $disk->putFile($housing->id, $asset->file);
                 abort_if($fileName === false, 400, 'Не удалось загрузить одно из изображений');
                 $housing->housingAssets()->create([
                     'url'  => "/storage/housing_assets/{$fileName}",
@@ -125,5 +125,66 @@ class HousingService
         }
     }
 
-    public function update(HousingUpdateData $data, Housing $housing): void {}
+    /**
+     * @throws Throwable
+     */
+    public function update(HousingUpdateData $data, Housing $housing): void
+    {
+        $disk = Storage::disk('housing_assets');
+
+        try {
+            DB::beginTransaction();
+
+            // Create housing
+            $housing->update([
+                'status'              => $data->moderate ? Housing::STATUS_ON_MODERATION : Housing::STATUS_CREATED,
+                'housing_category_id' => $data->housingCategoryId,
+                'price'               => $data->price,
+                'region_id'           => $data->regionId,
+                'address'             => $data->address,
+                'giving_type'         => $data->givingType,
+            ]);
+
+            // Create characteristics
+            if ($data->characteristics !== null) {
+                $housing->characteristics()->delete();
+
+                foreach ($data->characteristics as $characteristic) {
+                    $housing->characteristics()->attach($characteristic->characteristicId, [
+                        'value' => $characteristic->value,
+                    ]);
+                }
+            }
+
+            // Upload assets
+            if ($data->assets !== null) {
+                $disk->deleteDirectory($housing->id);
+                $housing->housingAssets()->delete();
+
+                foreach ($data->assets as $asset) {
+                    $fileName = $disk->putFile($housing->id, $asset->file);
+                    abort_if($fileName === false, 400, 'Не удалось загрузить одно из изображений');
+                    $housing->housingAssets()->create([
+                        'url'  => "/storage/housing_assets/{$fileName}",
+                        'type' => $asset->type,
+                    ]);
+                }
+            }
+
+            DB::commit();
+        } catch (QueryException $exception) {
+            foreach ($data->assets as $asset) {
+                $disk->delete($asset->file->hashName());
+            }
+            DB::rollBack();
+            Log::error($exception->getMessage());
+            throw $exception;
+        }
+    }
+
+    public function delete(Housing $housing): void
+    {
+        $housing->delete();
+        Storage::disk('housing_assets')->deleteDirectory($housing->id);
+    }
 }

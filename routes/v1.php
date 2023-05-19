@@ -18,6 +18,8 @@ Route::get('employee', 'EmployeeController@index');
 
 Route::post('call-back', 'CallBackController@store');
 
+Route::get('region', 'RegionController@index');
+
 Route::middleware('auth:api')
     ->prefix('auth')
     ->group(function () {
@@ -26,6 +28,9 @@ Route::middleware('auth:api')
 
         Route::post('employee', 'EmployeeController@store');
         Route::patch('employee/{employee}', 'EmployeeController@update');
+        Route::delete('employee/{employee}', 'EmployeeController@destroy');
 
         Route::post('housing', 'HousingController@store');
+        Route::patch('housing/{housing}', 'HousingController@update');
+        Route::delete('housing/{housing}', 'HousingController@destroy');
     });

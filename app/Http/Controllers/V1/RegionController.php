@@ -11,7 +11,10 @@ class RegionController extends Controller
 {
     public function index(): JsonResponse
     {
-        return response()->json();
+        $regions = Region::with('recursiveChildren')
+            ->whereNull('parent_id')
+            ->get();
+        return response()->json($regions);
     }
 
     public function store(Request $request): JsonResponse

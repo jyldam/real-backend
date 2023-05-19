@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\HousingReportType;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -10,14 +11,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('employees', function (Blueprint $table) {
+        Schema::create('housing_reports', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\User::class)
+            $table->foreignIdFor(HousingReportType::class)
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->string('avatar_url')->nullable();
-            $table->integer('type');
+            $table->json('value');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('employees');
+        Schema::dropIfExists('housing_reports');
     }
 };

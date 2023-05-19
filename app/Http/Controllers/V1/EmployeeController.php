@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V1;
 
+use Throwable;
 use App\Models\Employee;
 use Illuminate\Http\JsonResponse;
 use App\Data\V1\EmployeeCreateData;
@@ -23,15 +24,32 @@ class EmployeeController extends Controller
         return EmployeeResource::collection($employees);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function store(EmployeeCreateData $data): JsonResponse
     {
+        abort_if($data->type === Employee::TYPE_ADMIN, 403, 'Создание админа запрещено');
         $this->employeeService->create($data);
         return response()->json('Сотрудник успешно создан');
     }
 
+    /**
+     * @throws Throwable
+     */
     public function update(EmployeeUpdateData $data, Employee $employee): JsonResponse
     {
+        abort_if($data->type === Employee::TYPE_ADMIN, 403, 'Создание админа запрещено');
         $this->employeeService->update($data, $employee);
         return response()->json('Сотрудник успешно обновлен');
+    }
+
+    public function destroy(Employee $employee): JsonResponse
+    {
+        $authenticatedEmployee = employee();
+        abort_if($authenticatedEmployee->id === $employee->id || !$authenticatedEmployee->isAdmin(), 403);
+
+        $this->employeeService->delete($employee);
+        return response()->json('Сотрудник успешно удален');
     }
 }

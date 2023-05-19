@@ -12,7 +12,7 @@ use App\Models\HousingAsset;
 use App\Models\Characteristic;
 use Illuminate\Database\Seeder;
 use App\Models\HousingCategory;
-use App\Models\HousingCharacteristic;
+use Illuminate\Support\Facades\DB;
 use App\Models\CharacteristicCategory;
 
 class DatabaseSeeder extends Seeder
@@ -36,9 +36,19 @@ class DatabaseSeeder extends Seeder
             'avatar_url' => '/storage/avatars/58464833.jpg',
             'type'       => Employee::TYPE_REALTOR,
         ]);
+
         $region = Region::query()->create([
-            'name' => 'Алматы',
+            'name' => 'Казахстан',
         ]);
+        $region2 = Region::query()->create([
+            'name'      => 'Павлодаркая область',
+            'parent_id' => $region->id,
+        ]);
+        Region::query()->create([
+            'name'      => 'Павлодар',
+            'parent_id' => $region2->id,
+        ]);
+
         $today = today();
         $category = HousingCategory::query()->create([
             'name'                    => 'Квартиры',
@@ -144,49 +154,26 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        GivingType::query()->insert([
-            [
-                'name'       => 'Купить',
-                'slug'       => 'buy',
-                'created_at' => $today,
-                'updated_at' => $today,
-            ],
-            [
-                'name'       => 'Снять',
-                'slug'       => 'rent',
-                'created_at' => $today,
-                'updated_at' => $today,
-            ],
-        ]);
-
-        HousingCharacteristic::query()->insert([
+        DB::table('housing_characteristics')->insert([
             [
                 'characteristic_id' => 1,
                 'housing_id'        => 1,
                 'value'             => 5,
-                'created_at'        => $today,
-                'updated_at'        => $today,
             ],
             [
                 'characteristic_id' => 2,
                 'housing_id'        => 1,
                 'value'             => 3,
-                'created_at'        => $today,
-                'updated_at'        => $today,
             ],
             [
                 'characteristic_id' => 3,
                 'housing_id'        => 1,
                 'value'             => 40,
-                'created_at'        => $today,
-                'updated_at'        => $today,
             ],
             [
                 'characteristic_id' => 4,
                 'housing_id'        => 1,
                 'value'             => "\"{$faker->realText(1400)}\"",
-                'created_at'        => $today,
-                'updated_at'        => $today,
             ],
         ]);
 

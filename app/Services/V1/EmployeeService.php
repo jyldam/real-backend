@@ -28,24 +28,32 @@ class EmployeeService
         try {
             DB::beginTransaction();
 
-            $fileName = $disk->putFile('', $data->avatar);
-            abort_if($fileName === false, 400, 'Не удалось загрузить аватар');
+            $userColumns = [
+                'phone'    => $data->phone,
+                'name'     => $data->name,
+                'email'    => $data->email,
+                'password' => Hash::make($data->password),
+            ];
+
+            $employeeColumns = [
+                'type' => $data->type,
+            ];
+
+            if ($data->avatar) {
+                $fileName = $disk->putFile('', $data->avatar);
+                abort_if($fileName === false, 400, 'Не удалось загрузить аватар');
+                $employeeColumns['avatar_url'] = "/storage/avatars/{$fileName}";
+            }
 
             User::query()
-                ->create([
-                    'phone'    => $data->phone,
-                    'name'     => $data->name,
-                    'email'    => $data->email,
-                    'password' => Hash::make($data->password),
-                ])
-                ->employee()->create([
-                    'avatar_url' => "/storage/avatars/{$fileName}",
-                    'type'       => $data->type,
-                ]);
+                ->create($userColumns)
+                ->employee()->create($employeeColumns);
 
             DB::commit();
         } catch (QueryException $exception) {
-            $disk->delete($data->avatar->hashName());
+            if ($data->avatar) {
+                $disk->delete($data->avatar->hashName());
+            }
             DB::rollBack();
             Log::error($exception->getMessage());
             throw $exception;
@@ -92,5 +100,12 @@ class EmployeeService
             Log::error($exception->getMessage());
             throw $exception;
         }
+    }
+
+    public function delete(Employee $employee): void
+    {
+        $employee->delete();
+        $employee->user()->delete();
+        Storage::disk('avatars')->delete($employee->avatar_file);
     }
 }

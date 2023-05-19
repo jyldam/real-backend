@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 100)->index();
             $table->integer('parent_id')->nullable()->index();
-            $table->timestamps();
         });
     }
 
