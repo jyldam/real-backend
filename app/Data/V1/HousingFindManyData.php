@@ -8,6 +8,7 @@ use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 use Spatie\LaravelData\Attributes\Validation\In;
 use Spatie\LaravelData\Attributes\Validation\Max;
+use Spatie\LaravelData\Attributes\Validation\Exists;
 use Spatie\LaravelData\Attributes\Validation\Sometimes;
 
 #[MapInputName(SnakeCaseMapper::class)]
@@ -35,5 +36,9 @@ class HousingFindManyData extends Data
 
         #[Sometimes]
         public ?array $characteristics,
+
+        #[Sometimes]
+        #[Exists('employees', 'id')]
+        public ?int   $employeeId,
     ) {}
 }

@@ -47,6 +47,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\CharacteristicCategory $characteristicCategory
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Housing> $housings
+ * @property-read int|null $housings_count
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic query()
@@ -95,7 +97,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $user_id
- * @property string $avatar_url
+ * @property string|null $avatar_url
  * @property int $type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -122,16 +124,14 @@ namespace App\Models{
  * @property int $id
  * @property string $name
  * @property string $slug
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $alter_name
  * @method static \Illuminate\Database\Eloquent\Builder|GivingType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|GivingType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|GivingType query()
- * @method static \Illuminate\Database\Eloquent\Builder|GivingType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GivingType whereAlterName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GivingType whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GivingType whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GivingType whereSlug($value)
- * @method static \Illuminate\Database\Eloquent\Builder|GivingType whereUpdatedAt($value)
  */
 	class GivingType extends \Eloquent {}
 }
@@ -252,21 +252,58 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\HousingReport
+ *
+ * @property int $id
+ * @property int $housing_report_type_id
+ * @property mixed $value
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReport newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReport newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReport query()
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereHousingReportTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereValue($value)
+ */
+	class HousingReport extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\HousingReportType
+ *
+ * @property int $id
+ * @property string $name
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType whereName($value)
+ */
+	class HousingReportType extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Region
  *
  * @property int $id
  * @property string $name
  * @property int|null $parent_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Region> $children
+ * @property-read int|null $children_count
+ * @property-read Region|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Region> $recursiveChildren
+ * @property-read int|null $recursive_children_count
  * @method static \Illuminate\Database\Eloquent\Builder|Region newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Region newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Region query()
- * @method static \Illuminate\Database\Eloquent\Builder|Region whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Region whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Region whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Region whereParentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Region whereUpdatedAt($value)
  */
 	class Region extends \Eloquent {}
 }
@@ -280,6 +317,7 @@ namespace App\Models{
  * @property string $name
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property string|null $password_last_updated_at
  * @property string $password
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -297,6 +335,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePasswordLastUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)

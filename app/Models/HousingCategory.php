@@ -21,4 +21,9 @@ class HousingCategory extends Model
     {
         return $this->hasMany(CharacteristicCategory::class);
     }
+
+    public function housings(): HasMany
+    {
+        return $this->hasMany(Housing::class);
+    }
 }

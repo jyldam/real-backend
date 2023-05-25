@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 10);
             $table->string('slug', 10);
+            $table->string('alter_name', 10);
         });
     }
 

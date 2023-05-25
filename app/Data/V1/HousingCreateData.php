@@ -8,6 +8,7 @@ use App\Data\V1\HousingCreateData\AssetData;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 use Spatie\LaravelData\Attributes\Validation\Max;
+use Spatie\LaravelData\Attributes\Validation\Min;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\Validation\Exists;
 use App\Data\V1\HousingCreateData\CharacteristicData;
@@ -37,6 +38,7 @@ class HousingCreateData extends Data
 
         /** @var DataCollection<AssetData> */
         #[DataCollectionOf(AssetData::class)]
+        #[Min(3)]
         public DataCollection $assets,
 
         #[Sometimes]
@@ -58,6 +60,8 @@ class HousingCreateData extends Data
             'address'             => 'адрес',
             'giving_type'         => 'тип объявления',
             'moderate'            => 'на модерацию',
+            'characteristics'     => 'характеристики',
+            'assets'              => 'изображения',
         ];
     }
 }

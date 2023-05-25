@@ -14,7 +14,7 @@ class AuthController extends Controller
         $credentials = request(['phone', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
-            abort(400, 'Authentication failed');
+            abort(400, 'Не удалось авторизоваться');
         }
 
         return $this->respondWithToken($token);

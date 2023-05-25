@@ -2,10 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class HousingReport extends Model
 {
     use HasFactory;
+
+    public const STATUS_CREATED = 1;
+    public const STATUS_RESOLVED = 2;
+    public const STATUS_ARCHIVED = 2;
+
+    protected $fillable = [
+        'housing_report_type_id',
+        'value',
+    ];
+
+    protected $casts = [
+        'value' => 'collection',
+    ];
+
+    public function housingReportType(): BelongsTo
+    {
+        return $this->belongsTo(HousingReportType::class);
+    }
 }

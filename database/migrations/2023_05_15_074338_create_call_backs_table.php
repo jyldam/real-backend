@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('phone', 10);
             $table->json('extra');
             $table->integer('type');
+            $table->integer('status');
             $table->timestamps();
         });
     }

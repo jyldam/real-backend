@@ -3,9 +3,10 @@
 namespace App\Http\Resources\V1;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class EmployeeResource extends JsonResource
+class HousingReportResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,11 +17,10 @@ class EmployeeResource extends JsonResource
     {
         return [
             'id'         => $this->id,
-            'avatar_url' => asset($this->avatar_url),
-            'phone'      => $this->user->phone,
-            'name'       => $this->user->name,
-            'email'      => $this->user->email,
-            'type'       => $this->type,
+            'housing_id' => $this->housing_id,
+            'type'       => $this->housingReportType->name,
+            'value'      => $this->value,
+            'created_at' => Carbon::parse($this->created_at)->format('d.m.Y H:i'),
         ];
     }
 }

@@ -2,16 +2,17 @@
 
 namespace App\Data\V1;
 
+use App\Models\Housing;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\DataCollection;
 use App\Data\V1\HousingCreateData\AssetData;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use Spatie\LaravelData\Attributes\Validation\In;
 use Spatie\LaravelData\Attributes\Validation\Max;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\Validation\Exists;
 use App\Data\V1\HousingCreateData\CharacteristicData;
-use Spatie\LaravelData\Attributes\Validation\Sometimes;
 
 #[MapInputName(SnakeCaseMapper::class)]
 class HousingUpdateData extends Data
@@ -31,6 +32,14 @@ class HousingUpdateData extends Data
         #[Exists('giving_types', 'id')]
         public int             $givingType,
 
+        #[In(
+            Housing::STATUS_CREATED,
+            Housing::STATUS_ON_MODERATION,
+            Housing::STATUS_PUBLISHED,
+            Housing::STATUS_ARCHIVED,
+        )]
+        public int             $status,
+
         /** @var DataCollection<CharacteristicData>|null */
         #[DataCollectionOf(CharacteristicData::class)]
         public ?DataCollection $characteristics,
@@ -38,9 +47,6 @@ class HousingUpdateData extends Data
         /** @var DataCollection<AssetData>|null */
         #[DataCollectionOf(AssetData::class)]
         public ?DataCollection $assets,
-
-        #[Sometimes]
-        public ?bool           $moderate,
     ) {}
 
     public static function authorize(): bool
@@ -59,7 +65,7 @@ class HousingUpdateData extends Data
             'region_id'           => 'регион',
             'address'             => 'адрес',
             'giving_type'         => 'тип объявления',
-            'moderate'            => 'на модерацию',
+            'status'              => 'статус',
         ];
     }
 }

@@ -12,6 +12,10 @@ class CallBack extends Model
     public const TYPE_HOUSING_CALL_BACK = 1;
     public const TYPE_DIDNT_GET_THROUGH_CALLBACK = 2;
 
+    public const STATUS_CREATED = 1;
+    public const STATUS_RESOLVED = 2;
+    public const STATUS_ARCHIVED = 2;
+
     protected $fillable = [
         'employee_id',
         'phone',

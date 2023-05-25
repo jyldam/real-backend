@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,9 +19,6 @@ class Housing extends Model
     public const STATUS_PUBLISHED = 3;
     public const STATUS_ARCHIVED = 4;
 
-    public const GIVING_TYPE_RENT = 1;
-    public const GIVING_TYPE_SALE = 2;
-
     protected $fillable = [
         'price',
         'housing_category_id',
@@ -31,14 +29,24 @@ class Housing extends Model
         'status',
     ];
 
-    public static function allStatuses()
+    public function scopeCreated(Builder $query)
     {
-        return [
-            self::STATUS_CREATED,
-            self::STATUS_ON_MODERATION,
-            self::STATUS_PUBLISHED,
-            self::STATUS_ARCHIVED,
-        ];
+        $query->where('status', self::STATUS_CREATED);
+    }
+
+    public function scopeOnModeration(Builder $query)
+    {
+        $query->where('status', self::STATUS_ON_MODERATION);
+    }
+
+    public function scopePublished(Builder $query)
+    {
+        $query->where('status', self::STATUS_PUBLISHED);
+    }
+
+    public function scopeArchived(Builder $query)
+    {
+        $query->where('status', self::STATUS_ARCHIVED);
     }
 
     public function region(): BelongsTo

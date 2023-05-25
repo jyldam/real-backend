@@ -25,7 +25,7 @@ class CharacteristicCategory extends Model
 
     public function characteristics(): HasMany
     {
-        return $this->hasMany(Characteristic::class);
+        return $this->hasMany(Characteristic::class)->orderBy('sort');
     }
 
     public function parent(): BelongsTo

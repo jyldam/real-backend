@@ -20,8 +20,17 @@ class EmployeeController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        $employees = Employee::query()->with('user')->get();
+        $employees = Employee::query()
+            ->with('user')
+            ->latest()
+            ->paginate(request('per_page') ?: 30);
         return EmployeeResource::collection($employees);
+    }
+
+    public function show(Employee $employee): JsonResponse
+    {
+        $employee->load('user');
+        return response()->json(new EmployeeResource($employee));
     }
 
     /**
@@ -47,7 +56,12 @@ class EmployeeController extends Controller
     public function destroy(Employee $employee): JsonResponse
     {
         $authenticatedEmployee = employee();
-        abort_if($authenticatedEmployee->id === $employee->id || !$authenticatedEmployee->isAdmin(), 403);
+        abort_if(
+            $authenticatedEmployee->id === $employee->id
+            || !$authenticatedEmployee->isAdmin()
+            || $employee->isAdmin(),
+            403
+        );
 
         $this->employeeService->delete($employee);
         return response()->json('Сотрудник успешно удален');

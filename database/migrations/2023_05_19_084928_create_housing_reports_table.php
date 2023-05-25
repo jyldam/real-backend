@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Housing;
 use App\Models\HousingReportType;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,7 +18,12 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+            $table->foreignIdFor(Housing::class)
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->json('value');
+            $table->integer('status');
             $table->timestamps();
         });
     }

@@ -22,6 +22,7 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'password_last_updated_at',
     ];
 
     /**
@@ -50,7 +51,9 @@ class User extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims(): array
     {
-        return [];
+        return [
+            'plu' => $this->password_last_updated_at,
+        ];
     }
 
     public function employee()

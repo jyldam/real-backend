@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Model;
 
 class EmployeeService
 {
@@ -21,7 +22,7 @@ class EmployeeService
     /**
      * @throws Throwable
      */
-    public function create(EmployeeCreateData $data): void
+    public function create(EmployeeCreateData $data): Model
     {
         $disk = Storage::disk('avatars');
 
@@ -45,11 +46,13 @@ class EmployeeService
                 $employeeColumns['avatar_url'] = "/storage/avatars/{$fileName}";
             }
 
-            User::query()
+            $employee = User::query()
                 ->create($userColumns)
                 ->employee()->create($employeeColumns);
 
             DB::commit();
+
+            return $employee;
         } catch (QueryException $exception) {
             if ($data->avatar) {
                 $disk->delete($data->avatar->hashName());
@@ -70,29 +73,36 @@ class EmployeeService
         try {
             DB::beginTransaction();
 
-            $columns = [
+            $authenticatedEmployee = Auth::user()->employee;
+
+            $userColumns = [
                 'phone' => $data->phone,
                 'name'  => $data->name,
                 'email' => $data->email,
             ];
-
-            if ($data->password) {
-                $columns['password'] = Hash::make($data->password);
-            }
-
-            $authenticatedEmployee = Auth::user()->employee;
-
-            $employee->update([
+            $employeeColumns = [
                 'type' => $authenticatedEmployee->id !== $employee->id && $authenticatedEmployee->isAdmin()
                     ? $data->type
                     : $employee->type,
-            ]);
-            $employee->user()->update($columns);
+            ];
+
+            if ($data->password) {
+                $userColumns['password'] = Hash::make($data->password);
+                $userColumns['password_last_updated_at'] = now();
+            }
 
             if ($data->avatar) {
-                $fileName = $disk->putFileAs('', $data->avatar, $employee->avatar_file);
+                if ($employee->avatar_file) {
+                    $fileName = $disk->putFileAs('', $data->avatar, $employee->avatar_file);
+                } else {
+                    $fileName = $disk->putFile('', $data->avatar);
+                    $employeeColumns['avatar_url'] = "/storage/avatars/{$fileName}";
+                }
                 abort_if($fileName === false, 400, 'Не удалось загрузить аватар');
             }
+
+            $employee->update($employeeColumns);
+            $employee->user()->update($userColumns);
 
             DB::commit();
         } catch (QueryException $exception) {

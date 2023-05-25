@@ -24,6 +24,7 @@ class HousingCategoryResource extends JsonResource
                 ->characteristics
                 ->map
                 ->only(['id', 'label', 'name']),
+            'housings'                => HousingResource::collection($this->housings),
         ];
     }
 }

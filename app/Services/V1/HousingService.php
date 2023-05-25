@@ -73,6 +73,11 @@ class HousingService
                     }
                 })
             )
+            ->when(
+                $data->employeeId,
+                fn(Builder $query) => $query->where('employee_id', $data->employeeId)
+            )
+            ->latest()
             ->paginate($data->perPage ?? 30);
     }
 
@@ -100,7 +105,7 @@ class HousingService
             // Create characteristics
             foreach ($data->characteristics as $characteristic) {
                 $housing->characteristics()->attach($characteristic->characteristicId, [
-                    'value' => $characteristic->value,
+                    'value' => json_encode($characteristic->value),
                 ]);
             }
 
@@ -137,7 +142,7 @@ class HousingService
 
             // Create housing
             $housing->update([
-                'status'              => $data->moderate ? Housing::STATUS_ON_MODERATION : Housing::STATUS_CREATED,
+                'status'              => employee()->isRealtor() ? $housing->status : $data->status,
                 'housing_category_id' => $data->housingCategoryId,
                 'price'               => $data->price,
                 'region_id'           => $data->regionId,
@@ -147,11 +152,11 @@ class HousingService
 
             // Create characteristics
             if ($data->characteristics !== null) {
-                $housing->characteristics()->delete();
+                $housing->characteristics()->detach();
 
                 foreach ($data->characteristics as $characteristic) {
                     $housing->characteristics()->attach($characteristic->characteristicId, [
-                        'value' => $characteristic->value,
+                        'value' => json_encode($characteristic->value),
                     ]);
                 }
             }
@@ -173,8 +178,10 @@ class HousingService
 
             DB::commit();
         } catch (QueryException $exception) {
-            foreach ($data->assets as $asset) {
-                $disk->delete($asset->file->hashName());
+            if ($data->assets !== null) {
+                foreach ($data->assets as $asset) {
+                    $disk->delete($asset->file->hashName());
+                }
             }
             DB::rollBack();
             Log::error($exception->getMessage());

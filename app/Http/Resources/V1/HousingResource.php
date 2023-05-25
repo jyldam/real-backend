@@ -17,7 +17,7 @@ class HousingResource extends JsonResource
         return [
             'id'              => $this->id,
             'title'           => '3-комнатная квартира',
-            'images'          => $this->housingAssets->map(fn($housingAsset) => [
+            'assets'          => $this->housingAssets->map(fn($housingAsset) => [
                 'id'   => $housingAsset['id'],
                 'url'  => asset($housingAsset['url']),
                 'type' => $housingAsset['type'],
@@ -31,7 +31,7 @@ class HousingResource extends JsonResource
                 'name'                    => $this->housingCategory->name,
                 'preview_characteristics' => json_decode($this->housingCategory->preview_characteristics),
             ],
-            'giving_type'     => $this->givingTypeSlug?->slug,
+            'giving_type'     => $this->givingTypeSlug,
             'characteristics' => CharacteristicResource::collection($this->characteristics)
                 ->map(fn($characteristic) => array_merge($characteristic->toArray($request), [
                     'originalValue' => $characteristic['pivot']['value'],
@@ -41,6 +41,7 @@ class HousingResource extends JsonResource
                         $characteristic['pivot']['value']
                     ),
                 ])),
+            'created_at'      => $this->created_at,
         ];
     }
 

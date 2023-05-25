@@ -3,7 +3,6 @@
 namespace App\Services\V1;
 
 use Throwable;
-use App\Models\Housing;
 use App\Models\CallBack;
 use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
@@ -21,20 +20,18 @@ class CallBackService
         try {
             DB::beginTransaction();
 
-            $housing = Housing::query()->findOrFail($data->housing_id);
-            $extra = collect([
-                'housing_id' => $data->housing_id,
-            ]);
+            $extra = $data->housingId ? ['housing_id' => $data->housingId] : [];
 
             CallBack::query()->create([
-                'employee_id' => $housing->employee_id,
+                'employee_id' => $data->employeeId,
                 'phone'       => $data->phone,
                 'type'        => $data->type,
                 'extra'       => $extra,
             ]);
 
             DB::commit();
-        } catch (QueryException $exception) {
+        } catch
+        (QueryException $exception) {
             DB::rollBack();
             Log::error($exception->getMessage());
             abort(400, 'Не удалость создать запрос');
@@ -50,9 +47,7 @@ class CallBackService
             DB::beginTransaction();
 
             $admins = Employee::query()->admins()->get();
-            $extra = collect([
-                'housing_id' => $data->housing_id,
-            ]);
+            $extra = $data->housingId ? ['housing_id' => $data->housingId] : [];
 
             foreach ($admins as $admin) {
                 CallBack::query()->create([

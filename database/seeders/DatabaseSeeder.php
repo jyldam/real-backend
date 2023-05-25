@@ -3,12 +3,10 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Faker\Factory;
-use App\Models\Region;
 use App\Models\Housing;
 use App\Models\Employee;
-use App\Models\GivingType;
 use App\Models\HousingAsset;
+use App\Models\HousingReport;
 use App\Models\Characteristic;
 use Illuminate\Database\Seeder;
 use App\Models\HousingCategory;
@@ -22,34 +20,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Factory::create(config('app.faker_locale'));
-
         $user = \App\Models\User::factory()->create();
         $employee = Employee::query()->create([
             'user_id'    => $user->id,
             'avatar_url' => '/storage/avatars/58464833.jpg',
             'type'       => Employee::TYPE_ADMIN,
         ]);
-        $user2 = \App\Models\User::factory()->create();
-        Employee::query()->create([
-            'user_id'    => $user2->id,
-            'avatar_url' => '/storage/avatars/58464833.jpg',
-            'type'       => Employee::TYPE_REALTOR,
-        ]);
 
-        $region = Region::query()->create([
-            'name' => 'Казахстан',
-        ]);
-        $region2 = Region::query()->create([
-            'name'      => 'Павлодаркая область',
-            'parent_id' => $region->id,
-        ]);
-        Region::query()->create([
-            'name'      => 'Павлодар',
-            'parent_id' => $region2->id,
-        ]);
+        for ($i = 0; $i < 1000; $i++) {
+            $user = \App\Models\User::factory()->create();
+            Employee::query()->create([
+                'user_id'    => $user->id,
+                'avatar_url' => '/storage/avatars/58464833.jpg',
+                'type'       => Employee::TYPE_REALTOR,
+            ]);
+        }
 
-        $today = today();
+        $now = now();
         $category = HousingCategory::query()->create([
             'name'                    => 'Квартиры',
             'mesh_name'               => 'квартиры',
@@ -70,22 +57,22 @@ class DatabaseSeeder extends Seeder
                 'name'                => 'Характеристики',
                 'housing_category_id' => $category->id,
                 'parent_id'           => null,
-                'created_at'          => $today,
-                'updated_at'          => $today,
+                'created_at'          => $now,
+                'updated_at'          => $now,
             ],
             [
                 'name'                => 'О квартире',
                 'housing_category_id' => $category->id,
                 'parent_id'           => 1,
-                'created_at'          => $today,
-                'updated_at'          => $today,
+                'created_at'          => $now,
+                'updated_at'          => $now,
             ],
             [
                 'name'                => 'Описание',
                 'housing_category_id' => $category->id,
                 'parent_id'           => null,
-                'created_at'          => $today,
-                'updated_at'          => $today,
+                'created_at'          => $now,
+                'updated_at'          => $now,
             ],
         ]);
 
@@ -95,32 +82,32 @@ class DatabaseSeeder extends Seeder
                 'name'                       => 'floor',
                 'label'                      => 'Этажность',
                 'sort'                       => 4,
-                'created_at'                 => $today,
-                'updated_at'                 => $today,
+                'created_at'                 => $now,
+                'updated_at'                 => $now,
             ],
             [
                 'characteristic_category_id' => 2,
                 'name'                       => 'rooms_count',
                 'label'                      => 'Комнатность',
                 'sort'                       => 0,
-                'created_at'                 => $today,
-                'updated_at'                 => $today,
+                'created_at'                 => $now,
+                'updated_at'                 => $now,
             ],
             [
                 'characteristic_category_id' => 2,
                 'name'                       => 'quadrature',
                 'label'                      => 'Площадь',
                 'sort'                       => 2,
-                'created_at'                 => $today,
-                'updated_at'                 => $today,
+                'created_at'                 => $now,
+                'updated_at'                 => $now,
             ],
             [
                 'characteristic_category_id' => 3,
                 'name'                       => 'description',
                 'label'                      => 'Описание',
                 'sort'                       => 0,
-                'created_at'                 => $today,
-                'updated_at'                 => $today,
+                'created_at'                 => $now,
+                'updated_at'                 => $now,
             ],
         ]);
 
@@ -128,12 +115,12 @@ class DatabaseSeeder extends Seeder
             'price'               => 200_000,
             'housing_category_id' => $category->id,
             'employee_id'         => $employee->id,
-            'region_id'           => $region->id,
-            'address'             => $faker->streetAddress(),
-            'giving_type'         => Housing::GIVING_TYPE_RENT,
+            'region_id'           => 3,
+            'address'             => fake()->streetAddress(),
+            'giving_type'         => 1,
             'status'              => Housing::STATUS_PUBLISHED,
-            'created_at'          => $today,
-            'updated_at'          => $today,
+            'created_at'          => $now,
+            'updated_at'          => $now,
         ]);
 
         HousingAsset::query()->insert([
@@ -173,9 +160,23 @@ class DatabaseSeeder extends Seeder
             [
                 'characteristic_id' => 4,
                 'housing_id'        => 1,
-                'value'             => "\"{$faker->realText(1400)}\"",
+                'value'             => '"' . fake()->realText(1400) . '"',
             ],
         ]);
+
+        for ($i = 0; $i < 100; $i++) {
+            HousingReport::query()
+                ->insert([
+                    'housing_report_type_id' => random_int(1, 13),
+                    'housing_id'             => 1,
+                    'value'                  => json_encode([
+                        'message' => fake()->realText(),
+                    ]),
+                    'created_at'             => $now,
+                    'updated_at'             => $now,
+                    'status'                 => HousingReport::STATUS_CREATED,
+                ]);
+        }
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
