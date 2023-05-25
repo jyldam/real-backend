@@ -33,7 +33,7 @@ class EmployeeUpdateData extends Data
             Employee::TYPE_REALTOR,
             Employee::TYPE_MODERATOR
         )]
-        public int           $type,
+        public ?int          $type,
 
         #[Min(8)]
         public ?string       $password,

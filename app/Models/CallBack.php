@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CallBack extends Model
@@ -21,6 +22,7 @@ class CallBack extends Model
         'phone',
         'extra',
         'type',
+        'status',
     ];
 
     protected $casts = [
@@ -30,5 +32,10 @@ class CallBack extends Model
     public static function allTypes()
     {
         return [self::TYPE_HOUSING_CALL_BACK, self::TYPE_DIDNT_GET_THROUGH_CALLBACK];
+    }
+
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class);
     }
 }

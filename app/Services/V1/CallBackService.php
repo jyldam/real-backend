@@ -27,6 +27,7 @@ class CallBackService
                 'phone'       => $data->phone,
                 'type'        => $data->type,
                 'extra'       => $extra,
+                'status'      => CallBack::STATUS_CREATED,
             ]);
 
             DB::commit();
@@ -34,7 +35,7 @@ class CallBackService
         (QueryException $exception) {
             DB::rollBack();
             Log::error($exception->getMessage());
-            abort(400, 'Не удалость создать запрос');
+            abort(400, 'Не удалось создать запрос');
         }
     }
 
@@ -55,6 +56,7 @@ class CallBackService
                     'phone'       => $data->phone,
                     'type'        => $data->type,
                     'extra'       => $extra,
+                    'status'      => CallBack::STATUS_CREATED,
                 ]);
             }
 
@@ -62,7 +64,7 @@ class CallBackService
         } catch (QueryException $exception) {
             DB::rollBack();
             Log::error($exception->getMessage());
-            abort(400, 'Не удалость создать запрос');
+            abort(400, 'Не удалось создать запрос');
         }
     }
 }

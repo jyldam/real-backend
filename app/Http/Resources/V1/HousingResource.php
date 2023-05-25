@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V1;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -41,7 +42,8 @@ class HousingResource extends JsonResource
                         $characteristic['pivot']['value']
                     ),
                 ])),
-            'created_at'      => $this->created_at,
+            'created_at'      => Carbon::parse($this->created_at)->format('d.m.Y H:i'),
+            'status'          => $this->status,
         ];
     }
 

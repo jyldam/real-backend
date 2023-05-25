@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->string('name', 15);
             $table->string('label', 50);
             $table->integer('sort')->index();
-            $table->timestamps();
         });
     }
 

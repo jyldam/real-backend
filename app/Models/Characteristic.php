@@ -18,6 +18,8 @@ class Characteristic extends Model
         'sort',
     ];
 
+    public $timestamps = false;
+
     public function characteristicCategory(): BelongsTo
     {
         return $this->belongsTo(CharacteristicCategory::class);

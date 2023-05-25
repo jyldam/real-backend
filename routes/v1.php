@@ -36,4 +36,6 @@ Route::middleware('auth:api')
         Route::post('housing', 'HousingController@store');
         Route::patch('housing/{housing}', 'HousingController@update');
         Route::delete('housing/{housing}', 'HousingController@destroy');
+
+        Route::get('call-back', 'CallBackController@index');
     });

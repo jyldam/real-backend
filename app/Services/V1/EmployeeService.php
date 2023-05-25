@@ -80,11 +80,14 @@ class EmployeeService
                 'name'  => $data->name,
                 'email' => $data->email,
             ];
-            $employeeColumns = [
-                'type' => $authenticatedEmployee->id !== $employee->id && $authenticatedEmployee->isAdmin()
-                    ? $data->type
-                    : $employee->type,
-            ];
+            $employeeColumns = [];
+
+            if ($data->type) {
+                $employeeColumns['type'] =
+                    $authenticatedEmployee->id !== $employee->id && $authenticatedEmployee->isAdmin()
+                        ? $data->type
+                        : $employee->type;
+            }
 
             if ($data->password) {
                 $userColumns['password'] = Hash::make($data->password);

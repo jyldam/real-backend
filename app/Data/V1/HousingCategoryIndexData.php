@@ -10,8 +10,8 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class HousingCategoryIndexData extends Data
 {
     public function __construct(
-        public ?bool $withHousing,
+        public ?string $withHousing,
 
-        public ?int  $givingType
+        public ?int    $givingType
     ) {}
 }
