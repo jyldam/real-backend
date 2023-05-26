@@ -23,6 +23,8 @@ class CharacteristicCategory extends Model
         'preview_characteristics' => 'collection',
     ];
 
+    public $timestamps = false;
+
     public function characteristics(): HasMany
     {
         return $this->hasMany(Characteristic::class)->orderBy('sort');

@@ -54,7 +54,7 @@ class HousingService
             ->when(
                 $data->characteristics,
                 fn(Builder $query) => $query->whereHas('characteristics', function (Builder $query) use ($data) {
-                    foreach ($data->characteristics as $key => $value) {
+                    foreach (array_filter($data->characteristics) as $key => $value) {
                         $query->where('name', $key);
 
                         if (!is_array($value)) {

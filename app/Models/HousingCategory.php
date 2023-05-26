@@ -15,7 +15,14 @@ class HousingCategory extends Model
         'mesh_name',
         'disabled',
         'sort',
+        'preview_characteristics',
     ];
+
+    protected $casts = [
+        'preview_characteristics' => 'collection'
+    ];
+
+    public $timestamps = false;
 
     public function characteristicCategories(): HasMany
     {

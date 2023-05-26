@@ -21,7 +21,6 @@ return new class extends Migration {
                 ->nullable()
                 ->constrained('characteristic_categories')
                 ->nullOnDelete();
-            $table->timestamps();
         });
     }
 

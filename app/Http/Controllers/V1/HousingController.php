@@ -28,7 +28,7 @@ class HousingController extends Controller
     public function show(Housing $housing): JsonResponse
     {
         $employee = employee();
-        abort_if($employee && !$employee->isAdmin() && $housing->employee_id !== employee()->id, 403);
+        abort_if($employee && !$employee->isAdmin() && !$employee->isModerator() && $housing->employee_id !== employee()->id, 403);
         abort_if(!$employee && $housing->status !== Housing::STATUS_PUBLISHED, 404);
         $housing->load(['region', 'employee.user', 'housingCategory']);
         return response()->json(new HousingResource($housing));
