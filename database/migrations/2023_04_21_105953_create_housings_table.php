@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     /**
@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('housings', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\HousingCategory::class)
+                ->index()
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
@@ -25,9 +26,16 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->string('address');
-            $table->integer('giving_type'); // Sale or rent (maybe new types available. check model)
+            $table->string('address')->index();
+            $table->foreignId('giving_type')
+                ->index()
+                ->constrained(table: 'giving_types');
             $table->integer('status');
+            $table->string('owner_phone')->index();
+            $table->string('owner_name')->index();
+            $table->string('contract_number')
+                ->unique()
+                ->index();
             $table->timestamps();
         });
     }

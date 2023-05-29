@@ -2,11 +2,11 @@
 
 namespace App\Data\V1\HousingCreateData;
 
-use Spatie\LaravelData\Data;
 use App\Models\HousingAsset;
 use Illuminate\Http\UploadedFile;
-use Spatie\LaravelData\Attributes\Validation\In;
 use Spatie\LaravelData\Attributes\Validation\Image;
+use Spatie\LaravelData\Attributes\Validation\In;
+use Spatie\LaravelData\Data;
 
 class AssetData extends Data
 {
@@ -19,7 +19,9 @@ class AssetData extends Data
 
         #[Image]
         public UploadedFile $file,
-    ) {}
+    )
+    {
+    }
 
     public static function attributes(): array
     {

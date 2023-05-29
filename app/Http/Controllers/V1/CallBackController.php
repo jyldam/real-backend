@@ -19,8 +19,7 @@ class CallBackController extends Controller
 
     public function index()
     {
-        $employee = employee();
-        abort_if(!$employee->isAdmin() && !$employee->isRealtor(), 401);
+        abort_if(!employee()->isAdmin() && !employee()->isRealtor(), 401);
 
         $status = request('status');
 
@@ -32,8 +31,8 @@ class CallBackController extends Controller
                 fn(Builder $query) => $query->where('status', CallBack::STATUS_CREATED)
             )
             ->when(
-                $employee->isRealtor(),
-                fn(Builder $query) => $query->where('employee_id', $employee->id)
+                employee()->isRealtor(),
+                fn(Builder $query) => $query->where('employee_id', employee()->id)
             )
             ->latest()
             ->paginate(request('per_page') ?: 30);

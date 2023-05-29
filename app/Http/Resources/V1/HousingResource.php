@@ -15,7 +15,7 @@ class HousingResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        $values = [
             'id'              => $this->id,
             'title'           => '3-комнатная квартира',
             'assets'          => $this->housingAssets->map(fn($housingAsset) => [
@@ -39,12 +39,22 @@ class HousingResource extends JsonResource
                     'value'         => $this->getFormattedValue(
                         $this->housingCategory->name,
                         $characteristic['name'],
-                        $characteristic['pivot']['value']
+                        $characteristic['pivot']['value'],
                     ),
                 ])),
             'created_at'      => Carbon::parse($this->created_at)->format('d.m.Y H:i'),
             'status'          => $this->status,
         ];
+
+        if (employee()) {
+            $values['owner'] = [
+                'phone' => $this->owner_phone,
+                'name'  => $this->owner_name,
+            ];
+            $values['contract_number'] = $this->contract_number;
+        }
+
+        return $values;
     }
 
     private function getFormattedValue($categoryName, $characteristicName, $characteristicValue)

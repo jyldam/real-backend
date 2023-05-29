@@ -10,8 +10,10 @@ use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 use Spatie\LaravelData\Attributes\Validation\In;
 use Spatie\LaravelData\Attributes\Validation\Max;
+use Spatie\LaravelData\Attributes\Validation\Min;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\Validation\Exists;
+use Spatie\LaravelData\Attributes\Validation\Unique;
 use App\Data\V1\HousingCreateData\CharacteristicData;
 
 #[MapInputName(SnakeCaseMapper::class)]
@@ -19,26 +21,27 @@ class HousingUpdateData extends Data
 {
     public function __construct(
         #[Exists('housing_categories', 'id')]
-        public int             $housingCategoryId,
+        public int $housingCategoryId,
 
-        public int             $price,
+        public int $price,
 
         #[Exists('regions', 'id')]
-        public int             $regionId,
+        public int $regionId,
 
         #[Max(1000)]
-        public string          $address,
+        public string $address,
 
         #[Exists('giving_types', 'id')]
-        public int             $givingType,
+        public int $givingType,
 
-        #[In(
-            Housing::STATUS_CREATED,
-            Housing::STATUS_ON_MODERATION,
-            Housing::STATUS_PUBLISHED,
-            Housing::STATUS_ARCHIVED,
-        )]
-        public int             $status,
+        public string $ownerName,
+
+        #[Min(10)]
+        #[Max(10)]
+        public string $ownerPhone,
+
+        #[Unique('housings', 'contract_number')]
+        public string $contractNumber,
 
         /** @var DataCollection<CharacteristicData>|null */
         #[DataCollectionOf(CharacteristicData::class)]
@@ -47,14 +50,21 @@ class HousingUpdateData extends Data
         /** @var DataCollection<AssetData>|null */
         #[DataCollectionOf(AssetData::class)]
         public ?DataCollection $assets,
+
+        #[In(
+            Housing::STATUS_CREATED,
+            Housing::STATUS_ON_MODERATION,
+            Housing::STATUS_PUBLISHED,
+            Housing::STATUS_ARCHIVED,
+        )]
+        public ?int $status,
     ) {}
 
     public static function authorize(): bool
     {
-        $employee = employee();
-        return $employee->isAdmin()
-            || $employee->isModerator()
-            || request('housing')->employee_id === $employee->id;
+        return employee()->isAdmin()
+            || employee()->isModerator()
+            || request('housing')->employee_id === employee()->id;
     }
 
     public static function attributes(): array
@@ -66,6 +76,9 @@ class HousingUpdateData extends Data
             'address'             => 'адрес',
             'giving_type'         => 'тип объявления',
             'status'              => 'статус',
+            'owner_name'          => 'имя собственника',
+            'owner_phone'         => 'телефон собственника',
+            'contract_number'     => 'номер договора',
         ];
     }
 }

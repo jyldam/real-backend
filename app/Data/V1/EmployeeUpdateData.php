@@ -44,8 +44,7 @@ class EmployeeUpdateData extends Data
 
     public static function authorize(): bool
     {
-        $employee = employee();
-        return $employee && ($employee->isAdmin() || $employee->id === request('employee')->id);
+        return employee() && (employee()->isAdmin() || employee()->id === request('employee')->id);
     }
 
     public static function attributes(): array

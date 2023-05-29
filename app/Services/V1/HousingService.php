@@ -2,19 +2,19 @@
 
 namespace App\Services\V1;
 
-use Throwable;
-use App\Models\Housing;
-use Illuminate\Support\Facades\DB;
 use App\Data\V1\HousingCreateData;
-use App\Data\V1\HousingUpdateData;
-use Illuminate\Support\Facades\Log;
 use App\Data\V1\HousingFindManyData;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Storage;
+use App\Data\V1\HousingUpdateData;
+use App\Models\Housing;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class HousingService
 {
@@ -93,30 +93,35 @@ class HousingService
 
             // Create housing
             $housing = Housing::query()->create([
-                'employee_id'         => Auth::user()->employee->id,
-                'status'              => $data->moderate ? Housing::STATUS_ON_MODERATION : Housing::STATUS_CREATED,
+                'employee_id' => Auth::user()->employee->id,
+                'status' => $data->moderate ? Housing::STATUS_ON_MODERATION : Housing::STATUS_CREATED,
                 'housing_category_id' => $data->housingCategoryId,
-                'price'               => $data->price,
-                'region_id'           => $data->regionId,
-                'address'             => $data->address,
-                'giving_type'         => $data->givingType,
+                'price' => $data->price,
+                'region_id' => $data->regionId,
+                'address' => $data->address,
+                'giving_type' => $data->givingType,
+                'owner_name' => $data->ownerName,
+                'owner_phone' => $data->ownerPhone,
+                'contract_number' => $data->contractNumber,
             ]);
-
-            // Create characteristics
-            foreach ($data->characteristics as $characteristic) {
-                $housing->characteristics()->attach($characteristic->characteristicId, [
-                    'value' => json_encode($characteristic->value),
-                ]);
-            }
 
             // Upload assets
             foreach ($data->assets as $asset) {
                 $fileName = $disk->putFile($housing->id, $asset->file);
                 abort_if($fileName === false, 400, 'Не удалось загрузить одно из изображений');
                 $housing->housingAssets()->create([
-                    'url'  => "/storage/housing_assets/{$fileName}",
+                    'url' => "/storage/housing_assets/{$fileName}",
                     'type' => $asset->type,
                 ]);
+            }
+
+            // Create characteristics
+            if ($data->characteristics !== null) {
+                foreach ($data->characteristics as $characteristic) {
+                    $housing->characteristics()->attach($characteristic->characteristicId, [
+                        'value' => json_encode($characteristic->value),
+                    ]);
+                }
             }
 
             DB::commit();
@@ -142,12 +147,12 @@ class HousingService
 
             // Create housing
             $housing->update([
-                'status'              => employee()->isRealtor() ? $housing->status : $data->status,
+                'status' => employee()->isRealtor() ? $housing->status : $data->status,
                 'housing_category_id' => $data->housingCategoryId,
-                'price'               => $data->price,
-                'region_id'           => $data->regionId,
-                'address'             => $data->address,
-                'giving_type'         => $data->givingType,
+                'price' => $data->price,
+                'region_id' => $data->regionId,
+                'address' => $data->address,
+                'giving_type' => $data->givingType,
             ]);
 
             // Create characteristics
@@ -170,7 +175,7 @@ class HousingService
                     $fileName = $disk->putFile($housing->id, $asset->file);
                     abort_if($fileName === false, 400, 'Не удалось загрузить одно из изображений');
                     $housing->housingAssets()->create([
-                        'url'  => "/storage/housing_assets/{$fileName}",
+                        'url' => "/storage/housing_assets/{$fileName}",
                         'type' => $asset->type,
                     ]);
                 }

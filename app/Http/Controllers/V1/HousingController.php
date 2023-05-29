@@ -8,15 +8,15 @@ use Illuminate\Http\JsonResponse;
 use App\Data\V1\HousingCreateData;
 use App\Data\V1\HousingUpdateData;
 use App\Services\V1\HousingService;
-use App\Http\Controllers\Controller;
 use App\Data\V1\HousingFindManyData;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\HousingResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class HousingController extends Controller
 {
     public function __construct(
-        private readonly HousingService $housingService
+        private readonly HousingService $housingService,
     ) {}
 
     public function index(HousingFindManyData $data): AnonymousResourceCollection
@@ -27,10 +27,20 @@ class HousingController extends Controller
 
     public function show(Housing $housing): JsonResponse
     {
-        $employee = employee();
-        abort_if($employee && !$employee->isAdmin() && !$employee->isModerator() && $housing->employee_id !== employee()->id, 403);
-        abort_if(!$employee && $housing->status !== Housing::STATUS_PUBLISHED, 404);
-        $housing->load(['region', 'employee.user', 'housingCategory']);
+        abort_if(employee()
+            && !employee()->isAdmin()
+            && !employee()->isModerator()
+            && $housing->employee_id !== employee()->id, 403);
+
+        abort_if(!employee()
+            && $housing->status !== Housing::STATUS_PUBLISHED, 404);
+
+        $housing->load([
+            'region',
+            'employee.user',
+            'housingCategory',
+        ]);
+
         return response()->json(new HousingResource($housing));
     }
 

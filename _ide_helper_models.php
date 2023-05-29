@@ -19,8 +19,10 @@ namespace App\Models{
  * @property string $phone
  * @property \Illuminate\Support\Collection $extra
  * @property int $type
+ * @property int $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Employee $employee
  * @method static \Illuminate\Database\Eloquent\Builder|CallBack newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CallBack newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CallBack query()
@@ -29,6 +31,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CallBack whereExtra($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CallBack whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CallBack wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CallBack whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CallBack whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CallBack whereUpdatedAt($value)
  */
@@ -44,8 +47,6 @@ namespace App\Models{
  * @property string $name
  * @property string $label
  * @property int $sort
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\CharacteristicCategory $characteristicCategory
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Housing> $housings
  * @property-read int|null $housings_count
@@ -53,12 +54,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic query()
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereCharacteristicCategoryId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereLabel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereSort($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereUpdatedAt($value)
  */
 	class Characteristic extends \Eloquent {}
 }
@@ -71,8 +70,6 @@ namespace App\Models{
  * @property string $name
  * @property int $housing_category_id
  * @property int|null $parent_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Characteristic> $characteristics
  * @property-read int|null $characteristics_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, CharacteristicCategory> $children
@@ -81,12 +78,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicCategory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicCategory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicCategory query()
- * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicCategory whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicCategory whereHousingCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicCategory whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicCategory whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicCategory whereParentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicCategory whereUpdatedAt($value)
  */
 	class CharacteristicCategory extends \Eloquent {}
 }
@@ -148,6 +143,9 @@ namespace App\Models{
  * @property string $address
  * @property int $giving_type
  * @property int $status
+ * @property string $owner_phone
+ * @property string $owner_name
+ * @property string $contract_number
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Characteristic> $characteristics
@@ -158,15 +156,22 @@ namespace App\Models{
  * @property-read int|null $housing_assets_count
  * @property-read \App\Models\HousingCategory $housingCategory
  * @property-read \App\Models\Region $region
+ * @method static \Illuminate\Database\Eloquent\Builder|Housing archived()
+ * @method static \Illuminate\Database\Eloquent\Builder|Housing created()
  * @method static \Illuminate\Database\Eloquent\Builder|Housing newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Housing newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Housing onModeration()
+ * @method static \Illuminate\Database\Eloquent\Builder|Housing published()
  * @method static \Illuminate\Database\Eloquent\Builder|Housing query()
  * @method static \Illuminate\Database\Eloquent\Builder|Housing whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Housing whereContractNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Housing whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Housing whereEmployeeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Housing whereGivingType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Housing whereHousingCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Housing whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Housing whereOwnerName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Housing whereOwnerPhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Housing wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Housing whereRegionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Housing whereStatus($value)
@@ -207,22 +212,20 @@ namespace App\Models{
  * @property string $mesh_name
  * @property bool $disabled
  * @property int $sort
- * @property mixed $preview_characteristics
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Collection $preview_characteristics
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CharacteristicCategory> $characteristicCategories
  * @property-read int|null $characteristic_categories_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Housing> $housings
+ * @property-read int|null $housings_count
  * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory query()
- * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory whereDisabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory whereMeshName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory wherePreviewCharacteristics($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory whereSort($value)
- * @method static \Illuminate\Database\Eloquent\Builder|HousingCategory whereUpdatedAt($value)
  */
 	class HousingCategory extends \Eloquent {}
 }
@@ -256,15 +259,20 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $housing_report_type_id
- * @property mixed $value
+ * @property int $housing_id
+ * @property \Illuminate\Support\Collection $value
+ * @property int $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\HousingReportType $housingReportType
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport query()
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereHousingId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereHousingReportTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereValue($value)
  */
