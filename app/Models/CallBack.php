@@ -15,7 +15,7 @@ class CallBack extends Model
 
     public const STATUS_CREATED = 1;
     public const STATUS_RESOLVED = 2;
-    public const STATUS_ARCHIVED = 2;
+    public const STATUS_ARCHIVED = 3;
 
     protected $fillable = [
         'employee_id',

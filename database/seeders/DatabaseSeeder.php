@@ -113,19 +113,19 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        for ($i = 0; $i < 100; $i++) {
-            HousingReport::query()
-                ->insert([
-                    'housing_report_type_id' => random_int(1, 13),
-                    'housing_id'             => 1,
-                    'value'                  => json_encode([
-                        'message' => fake()->realText(),
-                    ]),
-                    'created_at'             => $now,
-                    'updated_at'             => $now,
-                    'status'                 => HousingReport::STATUS_CREATED,
-                ]);
-        }
+//        for ($i = 0; $i < 100; $i++) {
+//            HousingReport::query()
+//                ->insert([
+//                    'housing_report_type_id' => random_int(1, 13),
+//                    'housing_id'             => 1,
+//                    'value'                  => json_encode([
+//                        'message' => fake()->realText(),
+//                    ]),
+//                    'created_at'             => $now,
+//                    'updated_at'             => $now,
+//                    'status'                 => HousingReport::STATUS_CREATED,
+//                ]);
+//        }
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',

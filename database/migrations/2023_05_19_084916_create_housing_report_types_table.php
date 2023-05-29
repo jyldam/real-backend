@@ -13,6 +13,8 @@ return new class extends Migration {
         Schema::create('housing_report_types', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255);
+            $table->json('rules');
+            $table->json('attributes');
         });
     }
 

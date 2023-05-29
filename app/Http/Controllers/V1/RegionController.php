@@ -16,24 +16,4 @@ class RegionController extends Controller
             ->get();
         return response()->json($regions);
     }
-
-    public function store(Request $request): JsonResponse
-    {
-        return response()->json('Регион успешно создан');
-    }
-
-    public function show(Region $region): JsonResponse
-    {
-        return response()->json();
-    }
-
-    public function update(Request $request, Region $region): JsonResponse
-    {
-        return response()->json('Регион успешно обновлен');
-    }
-
-    public function destroy(Region $region): JsonResponse
-    {
-        return response()->json();
-    }
 }

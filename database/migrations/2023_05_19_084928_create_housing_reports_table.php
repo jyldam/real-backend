@@ -15,15 +15,18 @@ return new class extends Migration {
         Schema::create('housing_reports', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(HousingReportType::class)
+                ->index()
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
             $table->foreignIdFor(Housing::class)
+                ->index()
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
             $table->json('value');
-            $table->integer('status');
+            $table->integer('status')->index();
+            $table->string('ip')->index();
             $table->timestamps();
         });
     }

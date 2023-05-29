@@ -8,10 +8,34 @@ use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
 use App\Data\V1\CallBackCreateData;
 use Illuminate\Support\Facades\Log;
+use App\Data\V1\CallBackUpdateData;
+use App\Data\V1\CallBackFindManyData;
 use Illuminate\Database\QueryException;
+use Illuminate\Database\Eloquent\Builder;
+use App\Http\Resources\V1\CallBackResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CallBackService
 {
+    public function findMany(CallBackFindManyData $data): AnonymousResourceCollection
+    {
+        $callBacks = CallBack::query()
+            ->with('employee')
+            ->when(
+                $data->status,
+                fn(Builder $query) => $query->where('status', $data->status),
+                fn(Builder $query) => $query->where('status', CallBack::STATUS_CREATED),
+            )
+            ->when(
+                employee()->isRealtor(),
+                fn(Builder $query) => $query->where('employee_id', employee()->id),
+            )
+            ->latest()
+            ->paginate($data->perPage ?: 30);
+
+        return CallBackResource::collection($callBacks);
+    }
+
     /**
      * @throws Throwable
      */
@@ -66,5 +90,17 @@ class CallBackService
             Log::error($exception->getMessage());
             abort(400, 'Не удалось создать запрос');
         }
+    }
+
+    public function update(CallBackUpdateData $data, CallBack $callBack): void
+    {
+        $callBack->update([
+            'status' => $data->status,
+        ]);
+    }
+
+    public function delete(CallBack $callBack): void
+    {
+        $callBack->delete();
     }
 }

@@ -262,6 +262,7 @@ namespace App\Models{
  * @property int $housing_id
  * @property \Illuminate\Support\Collection $value
  * @property int $status
+ * @property string $ip
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\HousingReportType $housingReportType
@@ -272,6 +273,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereHousingId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereHousingReportTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereIp($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReport whereValue($value)
@@ -285,11 +287,15 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $name
+ * @property \Illuminate\Support\Collection $rules
+ * @property mixed $attributes
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType whereAttributes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType whereRules($value)
  */
 	class HousingReportType extends \Eloquent {}
 }

@@ -6,38 +6,22 @@ use Throwable;
 use App\Models\CallBack;
 use Illuminate\Http\JsonResponse;
 use App\Data\V1\CallBackCreateData;
+use App\Data\V1\CallBackUpdateData;
 use App\Services\V1\CallBackService;
 use App\Http\Controllers\Controller;
-use Illuminate\Database\Eloquent\Builder;
-use App\Http\Resources\V1\CallBackResource;
+use App\Data\V1\CallBackFindManyData;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CallBackController extends Controller
 {
     public function __construct(
-        private readonly CallBackService $callBackService
+        private readonly CallBackService $callBackService,
     ) {}
 
-    public function index()
+    public function index(CallBackFindManyData $data): AnonymousResourceCollection
     {
         abort_if(!employee()->isAdmin() && !employee()->isRealtor(), 401);
-
-        $status = request('status');
-
-        $callBacks = CallBack::query()
-            ->with('employee')
-            ->when(
-                $status,
-                fn(Builder $query) => $query->where('status', $status),
-                fn(Builder $query) => $query->where('status', CallBack::STATUS_CREATED)
-            )
-            ->when(
-                employee()->isRealtor(),
-                fn(Builder $query) => $query->where('employee_id', employee()->id)
-            )
-            ->latest()
-            ->paginate(request('per_page') ?: 30);
-
-        return CallBackResource::collection($callBacks);
+        return $this->callBackService->findMany($data);
     }
 
     /**
@@ -57,5 +41,17 @@ class CallBackController extends Controller
         };
 
         return response()->json('Запрос успешно создан');
+    }
+
+    public function update(CallBackUpdateData $data, CallBack $callBack): JsonResponse
+    {
+        $this->callBackService->update($data, $callBack);
+        return response()->json('Запрос успешно обновлен');
+    }
+
+    public function destroy(CallBack $callBack): JsonResponse
+    {
+        $this->callBackService->delete($callBack);
+        return response()->json('Запрос успешно удален');
     }
 }

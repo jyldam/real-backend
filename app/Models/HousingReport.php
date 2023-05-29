@@ -10,13 +10,16 @@ class HousingReport extends Model
 {
     use HasFactory;
 
-    public const STATUS_CREATED = 1;
+    public const STATUS_CREATED  = 1;
     public const STATUS_RESOLVED = 2;
-    public const STATUS_ARCHIVED = 2;
+    public const STATUS_ARCHIVED = 3;
 
     protected $fillable = [
         'housing_report_type_id',
+        'housing_id',
         'value',
+        'status',
+        'ip',
     ];
 
     protected $casts = [
