@@ -1,12 +1,12 @@
 <?php
 
-use App\Helpers\EmployeeHelper;
 use App\Models\Employee;
+use Illuminate\Support\Facades\Auth;
 
 if (!function_exists('employee')) {
     function employee(): ?Employee
     {
-        return EmployeeHelper::getEmployee();
+        return Auth::user()?->employee;
     }
 }
 

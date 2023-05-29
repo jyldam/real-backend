@@ -51,7 +51,6 @@ class HousingCreateData extends Data
         #[DataCollectionOf(CharacteristicData::class)]
         public ?DataCollection $characteristics,
 
-        #[Sometimes]
         public ?bool           $moderate,
     )
     {

@@ -3,11 +3,9 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Employee;
 use App\Models\Housing;
+use App\Models\Employee;
 use App\Models\HousingAsset;
-use App\Models\HousingCategory;
-use App\Models\HousingReport;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -25,7 +23,7 @@ class DatabaseSeeder extends Seeder
             'type'       => Employee::TYPE_ADMIN,
         ]);
 
-        for ($i = 0; $i < 1000; $i++) {
+        for ($i = 0 ; $i < 1000 ; $i++) {
             $user = \App\Models\User::factory()->create();
             Employee::query()->create([
                 'user_id'    => $user->id,
@@ -35,31 +33,10 @@ class DatabaseSeeder extends Seeder
         }
 
         $now = now();
-        $category = HousingCategory::query()->create([
-            'name'                    => 'Квартиры',
-            'mesh_name'               => 'квартиры',
-            'sort'                    => 0,
-            'disabled'                => false,
-            'preview_characteristics' => json_encode([
-                'rooms_count',
-                'quadrature',
-                'floor',
-            ]),
-        ]);
-        HousingCategory::query()->create([
-            'name'                    => 'Дома и участки',
-            'mesh_name'               => 'домов и участков',
-            'sort'                    => 1,
-            'disabled'                => false,
-            'preview_characteristics' => json_encode([
-                'rooms_count',
-                'quadrature',
-            ]),
-        ]);
 
         Housing::query()->insert([
             'price'               => 200_000,
-            'housing_category_id' => $category->id,
+            'housing_category_id' => 1,
             'employee_id'         => $employee->id,
             'region_id'           => 3,
             'address'             => fake()->streetAddress(),
@@ -94,17 +71,17 @@ class DatabaseSeeder extends Seeder
             [
                 'characteristic_id' => 1,
                 'housing_id'        => 1,
-                'value'             => 5,
+                'value'             => '"' . 5 . '"',
             ],
             [
                 'characteristic_id' => 2,
                 'housing_id'        => 1,
-                'value'             => 3,
+                'value'             => '"' . 3 . '"',
             ],
             [
                 'characteristic_id' => 3,
                 'housing_id'        => 1,
-                'value'             => 40,
+                'value'             => '"' . 40 . '"',
             ],
             [
                 'characteristic_id' => 5,

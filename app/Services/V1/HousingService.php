@@ -2,26 +2,25 @@
 
 namespace App\Services\V1;
 
-use App\Data\V1\HousingCreateData;
-use App\Data\V1\HousingFindManyData;
-use App\Data\V1\HousingUpdateData;
+use Throwable;
 use App\Models\Housing;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Auth;
+use App\Data\V1\HousingCreateData;
+use App\Data\V1\HousingUpdateData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Data\V1\HousingFindManyData;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Storage;
-use Throwable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class HousingService
 {
     public function findMany(HousingFindManyData $data): LengthAwarePaginator
     {
-        $employee = Auth::user()?->employee;
-        $status = $employee && $data->status
+        $status = employee() && $data->status
             ? $data->status
             : Housing::STATUS_PUBLISHED;
 
@@ -37,25 +36,25 @@ class HousingService
             ])
             ->where('status', $status)
             ->when(
-                $status !== Housing::STATUS_PUBLISHED && $employee?->isRealtor(),
-                fn(Builder $query) => $query->where('employee_id', $employee->id)
+                $status !== Housing::STATUS_PUBLISHED && employee()?->isRealtor(),
+                fn(Builder $query) => $query->where('employee_id', employee()->id),
             )
             ->when(
                 $data->givingType,
-                fn(Builder $query) => $query->where('giving_type', $data->givingType)
+                fn(Builder $query) => $query->where('giving_type', $data->givingType),
             )
             ->when(
                 $data->housingCategoryId,
                 fn(Builder $query) => $query->where(
                     'housing_category_id',
-                    $data->housingCategoryId
-                )
+                    $data->housingCategoryId,
+                ),
             )
             ->when(
                 $data->characteristics,
                 fn(Builder $query) => $query->whereHas('characteristics', function (Builder $query) use ($data) {
                     foreach (array_filter($data->characteristics) as $key => $value) {
-                        $query->where('name', $key);
+                        $query->where('characteristic_id', $key);
 
                         if (!is_array($value)) {
                             $query->whereJsonContains('value', $value);
@@ -71,11 +70,19 @@ class HousingService
                             $query->orWhereJsonContains('value', $v);
                         }
                     }
-                })
+                }),
             )
             ->when(
                 $data->employeeId,
-                fn(Builder $query) => $query->where('employee_id', $data->employeeId)
+                fn(Builder $query) => $query->where('employee_id', $data->employeeId),
+            )
+            ->when(
+                $data->address,
+                fn(Builder $query) => $query->where('address', 'ilike', "%{$data->address}%"),
+            )
+            ->when(
+                $data->price,
+                fn(Builder $query) => $query->whereBetween('price', $data->price),
             )
             ->latest()
             ->paginate($data->perPage ?? 30);
@@ -93,16 +100,16 @@ class HousingService
 
             // Create housing
             $housing = Housing::query()->create([
-                'employee_id' => Auth::user()->employee->id,
-                'status' => $data->moderate ? Housing::STATUS_ON_MODERATION : Housing::STATUS_CREATED,
+                'employee_id'         => Auth::user()->employee->id,
+                'status'              => $data->moderate ? Housing::STATUS_ON_MODERATION : Housing::STATUS_CREATED,
                 'housing_category_id' => $data->housingCategoryId,
-                'price' => $data->price,
-                'region_id' => $data->regionId,
-                'address' => $data->address,
-                'giving_type' => $data->givingType,
-                'owner_name' => $data->ownerName,
-                'owner_phone' => $data->ownerPhone,
-                'contract_number' => $data->contractNumber,
+                'price'               => $data->price,
+                'region_id'           => $data->regionId,
+                'address'             => $data->address,
+                'giving_type'         => $data->givingType,
+                'owner_name'          => $data->ownerName,
+                'owner_phone'         => $data->ownerPhone,
+                'contract_number'     => $data->contractNumber,
             ]);
 
             // Upload assets
@@ -110,7 +117,7 @@ class HousingService
                 $fileName = $disk->putFile($housing->id, $asset->file);
                 abort_if($fileName === false, 400, 'Не удалось загрузить одно из изображений');
                 $housing->housingAssets()->create([
-                    'url' => "/storage/housing_assets/{$fileName}",
+                    'url'  => "/storage/housing_assets/{$fileName}",
                     'type' => $asset->type,
                 ]);
             }
@@ -147,12 +154,12 @@ class HousingService
 
             // Create housing
             $housing->update([
-                'status' => employee()->isRealtor() ? $housing->status : $data->status,
+                'status'              => employee()->isRealtor() ? $housing->status : $data->status,
                 'housing_category_id' => $data->housingCategoryId,
-                'price' => $data->price,
-                'region_id' => $data->regionId,
-                'address' => $data->address,
-                'giving_type' => $data->givingType,
+                'price'               => $data->price,
+                'region_id'           => $data->regionId,
+                'address'             => $data->address,
+                'giving_type'         => $data->givingType,
             ]);
 
             // Create characteristics
@@ -175,7 +182,7 @@ class HousingService
                     $fileName = $disk->putFile($housing->id, $asset->file);
                     abort_if($fileName === false, 400, 'Не удалось загрузить одно из изображений');
                     $housing->housingAssets()->create([
-                        'url' => "/storage/housing_assets/{$fileName}",
+                        'url'  => "/storage/housing_assets/{$fileName}",
                         'type' => $asset->type,
                     ]);
                 }
