@@ -14,11 +14,21 @@ class CharacteristicResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
-            'id'                         => $this->id,
-            'name'                       => $this->name,
-            'label'                      => $this->label,
-            'characteristic_category_id' => $this->characteristic_category_id,
+        $characteristic = [
+            'id'       => $this->id,
+            'name'     => $this->name,
+            'label'    => $this->label,
+            'type'     => $this->type,
+            'required' => $this->required,
         ];
+
+        if ($this->options->isNotEmpty()) {
+            $characteristic['options'] = $this->options->map->only([
+                'id',
+                'name',
+            ]);
+        }
+
+        return $characteristic;
     }
 }

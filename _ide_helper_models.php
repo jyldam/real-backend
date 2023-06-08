@@ -46,18 +46,26 @@ namespace App\Models{
  * @property int $characteristic_category_id
  * @property string $name
  * @property string $label
+ * @property int $type
+ * @property bool|null $multiple
+ * @property bool $required
  * @property int $sort
  * @property-read \App\Models\CharacteristicCategory $characteristicCategory
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Housing> $housings
  * @property-read int|null $housings_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CharacteristicOption> $options
+ * @property-read int|null $options_count
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic query()
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereCharacteristicCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereMultiple($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereRequired($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereSort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Characteristic whereType($value)
  */
 	class Characteristic extends \Eloquent {}
 }
@@ -84,6 +92,24 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicCategory whereParentId($value)
  */
 	class CharacteristicCategory extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\CharacteristicOption
+ *
+ * @property int $id
+ * @property int $characteristic_id
+ * @property string $name
+ * @property-read \App\Models\Characteristic $characteristic
+ * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicOption newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicOption newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicOption query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicOption whereCharacteristicId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicOption whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CharacteristicOption whereName($value)
+ */
+	class CharacteristicOption extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -288,7 +314,7 @@ namespace App\Models{
  * @property int $id
  * @property string $name
  * @property \Illuminate\Support\Collection $rules
- * @property mixed $attributes
+ * @property \Illuminate\Support\Collection $attributes
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|HousingReportType query()

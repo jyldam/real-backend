@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Characteristic;
 use App\Models\HousingCategory;
 use Illuminate\Database\Migrations\Migration;
 
@@ -10,136 +11,243 @@ return new class extends Migration {
     public function up(): void
     {
         // Aparts
-        $aparts = HousingCategory::query()->create([
-            'name' => 'Квартиры',
-            'mesh_name' => 'квартиру',
-            'disabled' => false,
-            'sort' => 0,
-            'preview_characteristics' => ['rooms_count', 'quadrature', 'floor'],
-        ]);
-        $apartsCharacteristics = $aparts->characteristicCategories()->create([
+        $aparts = HousingCategory::query()
+            ->create([
+                'name'                    => 'Квартиры',
+                'mesh_name'               => 'квартиру',
+                'disabled'                => false,
+                'sort'                    => 0,
+                'preview_characteristics' => [
+                    'rooms_count',
+                    'quadrature',
+                    'floor',
+                ],
+            ]);
+
+        $characteristics = $aparts->characteristicCategories()->create([
             'name' => 'Характеристики',
         ]);
-        $apartsCharacteristics->characteristics()->createMany([
-            [
-                'name' => 'rooms_count',
-                'label' => 'Количество комнат',
-                'sort' => 0,
-            ],
-            [
-                'name' => 'floor',
-                'label' => 'Этажность',
-                'sort' => 1,
-            ],
-            [
-                'name' => 'quadrature',
-                'label' => 'Площадь',
-                'sort' => 2,
-            ],
-            [
-                'name' => 'year',
-                'label' => 'Год постройки',
-                'sort' => 3,
-            ],
+
+        $characteristics->characteristics()->create([
+            'name'     => 'rooms_count',
+            'label'    => 'Количество комнат',
+            'sort'     => 0,
+            'type'     => Characteristic::TYPE_NUMBER,
+            'required' => true,
         ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'building_type',
+            'label'    => 'Тип строения',
+            'sort'     => 1,
+            'type'     => Characteristic::TYPE_ENUM,
+            'required' => true,
+        ])->options()->createMany([
+            ['name' => 'Кирпичный'],
+            ['name' => 'Панельный'],
+            ['name' => 'Монолитный'],
+            ['name' => 'Иное'],
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'floor',
+            'label'    => 'Этаж',
+            'sort'     => 2,
+            'type'     => Characteristic::TYPE_NUMBER,
+            'required' => true,
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'total_quadrature',
+            'label'    => 'Квадратура общая',
+            'sort'     => 3,
+            'type'     => Characteristic::TYPE_NUMBER,
+            'required' => true,
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'kitchen_quadrature',
+            'label'    => 'Квадратура кухня',
+            'sort'     => 4,
+            'type'     => Characteristic::TYPE_NUMBER,
+            'required' => true,
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'year',
+            'label'    => 'Год постройки',
+            'sort'     => 5,
+            'type'     => Characteristic::TYPE_NUMBER,
+            'required' => true,
+        ]);
+
         $aparts->characteristicCategories()->create([
             'name' => 'Описание',
         ])->characteristics()->create([
-            'name' => 'description',
-            'label' => 'Описание',
-            'sort' => 0,
+            'name'     => 'description',
+            'label'    => 'Описание',
+            'sort'     => 0,
+            'type'     => Characteristic::TYPE_STRING,
+            'required' => true,
         ]);
 
         // House
         $house = HousingCategory::query()->create([
-            'name' => 'Дома',
-            'mesh_name' => 'дом',
-            'disabled' => false,
-            'sort' => 1,
-            'preview_characteristics' => ['type', 'size', 'quadrature', 'floor'],
+            'name'                    => 'Дома',
+            'mesh_name'               => 'дом',
+            'disabled'                => false,
+            'sort'                    => 1,
+            'preview_characteristics' => [
+                'type',
+                'size',
+                'quadrature',
+                'floor',
+            ],
         ]);
-        $houseCharacteristics = $house->characteristicCategories()->create([
+
+        $characteristics = $house->characteristicCategories()->create([
             'name' => 'Характеристики',
         ]);
-        $houseCharacteristics->characteristics()->createMany([
-            [
-                'name' => 'rooms_count',
-                'label' => 'Количество комнат',
-                'sort' => 0,
-            ],
-            [
-                'name' => 'floor',
-                'label' => 'Этажность',
-                'sort' => 1,
-            ],
-            [
-                'name' => 'quadrature',
-                'label' => 'Площадь дома',
-                'sort' => 2,
-            ],
-            [
-                'name' => 'year',
-                'label' => 'Год постройки',
-                'sort' => 3,
-            ],
+
+        $characteristics->characteristics()->create([
+            'name'     => 'square',
+            'label'    => 'Площадь участка, соток',
+            'sort'     => 0,
+            'type'     => Characteristic::TYPE_NUMBER,
+            'required' => true,
         ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'heating',
+            'label'    => 'Отопление',
+            'sort'     => 1,
+            'type'     => Characteristic::TYPE_ENUM,
+            'required' => true,
+        ])->options()->createMany([
+            ['name' => 'Центральное'],
+            ['name' => 'На газе'],
+            ['name' => 'На твердом топливе'],
+            ['name' => 'На жидком топливе'],
+            ['name' => 'Смешанное'],
+            ['name' => 'Без отопления'],
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'water',
+            'label'    => 'Вода',
+            'sort'     => 2,
+            'type'     => Characteristic::TYPE_ENUM,
+            'required' => true,
+        ])->options()->createMany([
+            ['name' => 'Центральное водоснабжение'],
+            ['name' => 'Есть возможность подключения'],
+            ['name' => 'Скважина'],
+            ['name' => 'Нет'],
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'sewerage',
+            'label'    => 'Канализация',
+            'sort'     => 3,
+            'type'     => Characteristic::TYPE_ENUM,
+            'required' => true,
+        ])->options()->createMany([
+            ['name' => 'Центральная'],
+            ['name' => 'Есть возможность подведения'],
+            ['name' => 'Септик'],
+            ['name' => 'Нет'],
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'quadrature',
+            'label'    => 'Квадратура дома',
+            'sort'     => 4,
+            'type'     => Characteristic::TYPE_NUMBER,
+            'required' => true,
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'number_of_floors',
+            'label'    => 'Количество этажей',
+            'sort'     => 5,
+            'type'     => Characteristic::TYPE_NUMBER,
+            'required' => true,
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'building_type',
+            'label'    => 'Тип строения',
+            'sort'     => 6,
+            'type'     => Characteristic::TYPE_ENUM,
+            'required' => true,
+        ])->options()->createMany([
+            ['name' => 'кирпичный'],
+            ['name' => 'панельный'],
+            ['name' => 'монолитный'],
+            ['name' => 'деревянный'],
+            ['name' => 'каркасно-камышитовый'],
+            ['name' => 'пеноблочный'],
+            ['name' => 'сэндвич-панели'],
+            ['name' => 'каркасно-щитовой'],
+            ['name' => 'шлакоблочный'],
+            ['name' => 'иное'],
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'garage',
+            'label'    => 'Гараж',
+            'sort'     => 7,
+            'type'     => Characteristic::TYPE_BOOL,
+            'required' => true,
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'bath',
+            'label'    => 'Баня',
+            'sort'     => 8,
+            'type'     => Characteristic::TYPE_BOOL,
+            'required' => true,
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'outbuildings',
+            'label'    => 'Хозпостройки',
+            'sort'     => 9,
+            'type'     => Characteristic::TYPE_BOOL,
+            'required' => true,
+        ]);
+
         $house->characteristicCategories()->create([
             'name' => 'Описание',
         ])->characteristics()->create([
-            'name' => 'description',
-            'label' => 'Описание',
-            'sort' => 0,
+            'name'     => 'description',
+            'label'    => 'Описание',
+            'sort'     => 0,
+            'type'     => Characteristic::TYPE_STRING,
+            'required' => true,
         ]);
 
-        // Stock
-        $stock = HousingCategory::query()->create([
-            'name' => 'Прочая недвижимость',
-            'mesh_name' => 'прочей недвижимости',
-            'disabled' => false,
-            'sort' => 2,
+        // Other
+        $other = HousingCategory::query()->create([
+            'name'                    => 'Прочая недвижимость',
+            'mesh_name'               => 'прочей недвижимости',
+            'disabled'                => false,
+            'sort'                    => 2,
             'preview_characteristics' => [],
         ]);
-        $stockCharacteristics = $stock->characteristicCategories()->create([
+
+        $characteristics = $other->characteristicCategories()->create([
             'name' => 'Характеристики',
         ]);
-        $stockCharacteristics->characteristics()->createMany([
-            [
-                'name' => 'rooms_count',
-                'label' => 'Количество комнат',
-                'sort' => 0,
-            ],
-            [
-                'name' => 'floor',
-                'label' => 'Этажность',
-                'sort' => 1,
-            ],
-            [
-                'name' => 'land_quadrature',
-                'label' => 'Площадь территории',
-                'sort' => 2,
-            ],
-            [
-                'name' => 'room_quadrature',
-                'label' => 'Площадь производственных помещений',
-                'sort' => 3,
-            ],
-            [
-                'name' => 'room_height',
-                'label' => 'Высота производственных помещений',
-                'sort' => 4,
-            ],
-            [
-                'name' => 'year',
-                'label' => 'Год постройки',
-                'sort' => 5,
-            ],
-        ]);
-        $stock->characteristicCategories()->create([
+
+        $other->characteristicCategories()->create([
             'name' => 'Описание',
         ])->characteristics()->create([
-            'name' => 'description',
-            'label' => 'Описание',
-            'sort' => 0,
+            'name'     => 'description',
+            'label'    => 'Описание',
+            'sort'     => 0,
+            'type'     => Characteristic::TYPE_STRING,
+            'required' => true,
         ]);
     }
 

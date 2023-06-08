@@ -11,12 +11,12 @@ return new class extends Migration {
     {
         $values = [
             [
-                'name'       => 'Купить',
+                'name'       => 'Продажа',
                 'slug'       => 'buy',
                 'alter_name' => 'Продажа',
             ],
             [
-                'name'       => 'Снять',
+                'name'       => 'Аренда',
                 'slug'       => 'rent',
                 'alter_name' => 'Аренда',
             ],

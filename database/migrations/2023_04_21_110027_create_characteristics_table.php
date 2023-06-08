@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Schema;
+use App\Models\CharacteristicCategory;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -12,10 +13,13 @@ return new class extends Migration {
     {
         Schema::create('characteristics', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\CharacteristicCategory::class)
+            $table->foreignIdFor(CharacteristicCategory::class)
                 ->constrained();
-            $table->string('name', 15);
+            $table->string('name', 50);
             $table->string('label', 50);
+            $table->integer('type');
+            $table->boolean('multiple')->nullable();
+            $table->boolean('required');
             $table->integer('sort')->index();
         });
     }

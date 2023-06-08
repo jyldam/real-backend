@@ -11,7 +11,7 @@ class HousingCategoryService
     public function getActive(?HousingCategoryIndexData $data = null): Collection
     {
         $with = [
-            'characteristicCategories.characteristics' => fn($query) => $query->orderBy('sort'),
+            'characteristicCategories.characteristics' => fn($query) => $query->with('options')->orderBy('sort'),
         ];
 
         if ($data && $data->withHousing) {

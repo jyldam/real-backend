@@ -15,6 +15,7 @@ use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\Validation\Exists;
 use Spatie\LaravelData\Attributes\Validation\Unique;
 use App\Data\V1\HousingCreateData\CharacteristicData;
+use Spatie\LaravelData\Support\Validation\References\RouteParameterReference;
 
 #[MapInputName(SnakeCaseMapper::class)]
 class HousingUpdateData extends Data
@@ -40,7 +41,7 @@ class HousingUpdateData extends Data
         #[Max(10)]
         public string $ownerPhone,
 
-        #[Unique('housings', 'contract_number')]
+        #[Unique('housings', 'contract_number', ignore: new RouteParameterReference('housing', 'id'))]
         public string $contractNumber,
 
         /** @var DataCollection<CharacteristicData>|null */

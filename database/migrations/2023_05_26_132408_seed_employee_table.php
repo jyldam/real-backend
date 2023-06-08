@@ -2,7 +2,8 @@
 
 use App\Models\User;
 use App\Models\Employee;
-use Illuminate\Support\Facades\Hash;
+use App\Data\V1\EmployeeCreateData;
+use App\Services\V1\EmployeeService;
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
@@ -11,17 +12,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        User::query()
-            ->create([
-                'phone'                    => '0000000000',
-                'name'                     => 'Администратор',
-                'email'                    => 'not-exist@example.com',
-                'password_last_updated_at' => now(),
-                'password'                 => Hash::make('password'),
-            ])
-            ->employee()->create([
-                'type' => Employee::TYPE_ADMIN,
-            ]);
+        (new EmployeeService())->create(new EmployeeCreateData(
+            phone: '0000000000',
+            name: 'Администратор',
+            email: 'not-exist@example.com',
+            password: 'password',
+            type: Employee::TYPE_ADMIN,
+        ));
     }
 
     /**

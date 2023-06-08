@@ -4,6 +4,7 @@ namespace App\Http\Resources\V1;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\Characteristic;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class HousingResource extends JsonResource
@@ -34,14 +35,26 @@ class HousingResource extends JsonResource
             ],
             'giving_type'     => $this->givingTypeSlug,
             'characteristics' => CharacteristicResource::collection($this->characteristics)
-                ->map(fn($characteristic) => array_merge($characteristic->toArray($request), [
-                    'originalValue' => $characteristic['pivot']['value'],
-                    'value'         => $this->getFormattedValue(
-                        $this->housingCategory->name,
-                        $characteristic['name'],
-                        $characteristic['pivot']['value'],
-                    ),
-                ])),
+                ->map(function ($characteristic) use ($request) {
+                    $characteristicValue = json_decode($characteristic->pivot->value, false);
+
+                    $value = match ($characteristic['type']) {
+                        Characteristic::TYPE_ENUM => $characteristic->options
+                            ->where('id', $characteristicValue)
+                            ->value('name'),
+                        Characteristic::TYPE_BOOL => $characteristicValue ? 'Да' : 'Нет',
+                        default                   => $this->getFormattedValue(
+                            $this->housingCategory->name,
+                            $characteristic->name,
+                            $characteristicValue,
+                        )
+                    };
+
+                    return array_merge($characteristic->toArray($request), [
+                        'originalValue' => $characteristicValue,
+                        'value'         => $value,
+                    ]);
+                }),
             'created_at'      => Carbon::parse($this->created_at)->format('d.m.Y H:i'),
             'status'          => $this->status,
         ];
@@ -60,9 +73,8 @@ class HousingResource extends JsonResource
     private function getFormattedValue($categoryName, $characteristicName, $characteristicValue)
     {
         $formatted = @config('formatted-values')[mb_strtolower($categoryName)][strtolower($characteristicName)];
-        $characteristicValue = json_decode($characteristicValue);
 
-        if (is_numeric($characteristicValue)) {
+        if (is_numeric($characteristicValue) && $characteristicName !== 'year') {
             $characteristicValue = number_format($characteristicValue, 0, '.', ' ');
         }
 

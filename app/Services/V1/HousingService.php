@@ -9,10 +9,13 @@ use App\Data\V1\HousingUpdateData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Data\V1\HousingFindManyData;
-use Illuminate\Support\Facades\Auth;
+use App\Models\CharacteristicCategory;
+use Spatie\LaravelData\DataCollection;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -53,11 +56,19 @@ class HousingService
             ->when(
                 $data->characteristics,
                 fn(Builder $query) => $query->whereHas('characteristics', function (Builder $query) use ($data) {
-                    foreach (array_filter($data->characteristics) as $key => $value) {
-                        $query->where('characteristic_id', $key);
+                    foreach ($data->characteristics as $key => $value) {
+                        if (!$value) {
+                            continue;
+                        }
+
+                        $query->where('name', $key);
 
                         if (!is_array($value)) {
+                            $value = explode(',', $value);
                             $query->whereJsonContains('value', $value);
+                            for ($i = 1 ; $i < count($value) - 1 ; $i++) {
+                                $query->orWhereJsonContains('value', $value[$i]);
+                            }
                             return;
                         }
 
@@ -65,10 +76,10 @@ class HousingService
                             return;
                         }
 
-                        $query->whereJsonContains('value', $value[0]);
-                        foreach ($value as $v) {
-                            $query->orWhereJsonContains('value', $v);
-                        }
+                        $query->whereRaw("(value #>> '{}')::int >= ? and (value #>> '{}')::int <= ?", [
+                            $value[0],
+                            $value[1],
+                        ]);
                     }
                 }),
             )
@@ -82,7 +93,9 @@ class HousingService
             )
             ->when(
                 $data->price,
-                fn(Builder $query) => $query->whereBetween('price', $data->price),
+                fn(Builder $query) => count($data->price) === 1
+                    ? $query->where('price', '>=', $data->price[0])
+                    : $query->whereBetween('price', $data->price),
             )
             ->latest()
             ->paginate($data->perPage ?? 30);
@@ -93,6 +106,8 @@ class HousingService
      */
     public function create(HousingCreateData $data): void
     {
+        $this->validateCharacteristics($data->housingCategoryId, $data->characteristics);
+
         $disk = Storage::disk('housing_assets');
 
         try {
@@ -100,7 +115,7 @@ class HousingService
 
             // Create housing
             $housing = Housing::query()->create([
-                'employee_id'         => Auth::user()->employee->id,
+                'employee_id'         => employee()?->id ?? $data->employeeId,
                 'status'              => $data->moderate ? Housing::STATUS_ON_MODERATION : Housing::STATUS_CREATED,
                 'housing_category_id' => $data->housingCategoryId,
                 'price'               => $data->price,
@@ -205,5 +220,46 @@ class HousingService
     {
         $housing->delete();
         Storage::disk('housing_assets')->deleteDirectory($housing->id);
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private function validateCharacteristics(int $housingCategoryId, ?DataCollection $characteristics): void
+    {
+        $characteristicCategories = CharacteristicCategory::query()
+            ->with('characteristics')
+            ->where('housing_category_id', $housingCategoryId)
+            ->get();
+
+        $rules = [];
+        $attributes = [];
+
+        foreach ($characteristicCategories as $characteristicCategory) {
+            foreach ($characteristicCategory->characteristics as $characteristic) {
+                if ($characteristic->required) {
+                    $rules["characteristics.id_{$characteristic->id}"] = ['required'];
+                    $attributes["characteristics.id_{$characteristic->id}"] = mb_strtolower($characteristic->label);
+                }
+            }
+        }
+
+        $data = [
+            'characteristics' => [],
+        ];
+
+        if ($characteristics) {
+            foreach ($characteristics as $characteristic) {
+                $data['characteristics']["id_{$characteristic->characteristicId}"] = $characteristic->value;
+            }
+        }
+
+        $validator = Validator::make(
+            data: $data,
+            rules: $rules,
+            attributes: $attributes,
+        );
+
+        $validator->validate();
     }
 }

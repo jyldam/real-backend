@@ -10,7 +10,10 @@ class CharacteristicCategoryService
     public function getByHousingCategory(HousingCategory $housingCategory): Collection
     {
         return $housingCategory->characteristicCategories()
-            ->with(['children.characteristics', 'characteristics',])
+            ->with([
+                'children.characteristics' => fn($query) => $query->with('options'),
+                'characteristics'          => fn($query) => $query->with('options'),
+            ])
             ->whereNull('parent_id')
             ->get();
     }

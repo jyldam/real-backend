@@ -14,7 +14,7 @@ class CharacteristicData extends Data
         #[Exists('characteristics', 'id')]
         public int    $characteristicId,
 
-        public string $value,
+        public ?string $value,
     ) {}
 
     public static function attributes(): array

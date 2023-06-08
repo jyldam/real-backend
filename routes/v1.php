@@ -23,6 +23,8 @@ Route::get('region', 'RegionController@index');
 
 Route::post('housing/report', 'HousingReportController@store');
 
+Route::get('housing/filter/{category}', 'HousingFilterController@index');
+
 Route::middleware('auth:api')
     ->prefix('auth')
     ->group(function () {
