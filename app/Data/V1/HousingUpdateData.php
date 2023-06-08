@@ -50,6 +50,7 @@ class HousingUpdateData extends Data
 
         /** @var DataCollection<AssetData>|null */
         #[DataCollectionOf(AssetData::class)]
+        #[Min(3)]
         public ?DataCollection $assets,
 
         #[In(
