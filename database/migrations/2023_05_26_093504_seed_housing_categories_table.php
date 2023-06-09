@@ -58,9 +58,17 @@ return new class extends Migration {
         ]);
 
         $characteristics->characteristics()->create([
+            'name'     => 'total_floor',
+            'label'    => 'Этажность',
+            'sort'     => 3,
+            'type'     => Characteristic::TYPE_NUMBER,
+            'required' => true,
+        ]);
+
+        $characteristics->characteristics()->create([
             'name'     => 'total_quadrature',
             'label'    => 'Квадратура общая',
-            'sort'     => 3,
+            'sort'     => 4,
             'type'     => Characteristic::TYPE_NUMBER,
             'required' => true,
         ]);
@@ -68,7 +76,7 @@ return new class extends Migration {
         $characteristics->characteristics()->create([
             'name'     => 'kitchen_quadrature',
             'label'    => 'Квадратура кухня',
-            'sort'     => 4,
+            'sort'     => 5,
             'type'     => Characteristic::TYPE_NUMBER,
             'required' => true,
         ]);
@@ -76,7 +84,7 @@ return new class extends Migration {
         $characteristics->characteristics()->create([
             'name'     => 'year',
             'label'    => 'Год постройки',
-            'sort'     => 5,
+            'sort'     => 6,
             'type'     => Characteristic::TYPE_NUMBER,
             'required' => true,
         ]);
