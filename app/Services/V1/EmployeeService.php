@@ -73,7 +73,7 @@ class EmployeeService
         try {
             DB::beginTransaction();
 
-            $authenticatedEmployee = Auth::user()->employee;
+            $authenticatedEmployee = employee();
 
             $userColumns = [
                 'phone' => $data->phone,

@@ -15,6 +15,7 @@ return new class extends Migration {
             ->create([
                 'name'                    => 'Квартиры',
                 'mesh_name'               => 'квартиру',
+                'title'                   => '{{rooms_count}}-я квартира, {{total_quadrature}} м<sup>2</sup>, {{floor}}/{{total_floor}} этаж',
                 'disabled'                => false,
                 'sort'                    => 0,
                 'preview_characteristics' => [
@@ -103,6 +104,7 @@ return new class extends Migration {
         $house = HousingCategory::query()->create([
             'name'                    => 'Дома',
             'mesh_name'               => 'дом',
+            'title'                   => 'Дом, {{quadrature}} м<sup>2</sup>',
             'disabled'                => false,
             'sort'                    => 1,
             'preview_characteristics' => [
@@ -239,6 +241,7 @@ return new class extends Migration {
         $other = HousingCategory::query()->create([
             'name'                    => 'Прочая недвижимость',
             'mesh_name'               => 'прочей недвижимости',
+            'title'                   => '{{title}}, {{quadrature}} м<sup>2</sup>',
             'disabled'                => false,
             'sort'                    => 2,
             'preview_characteristics' => [],
@@ -246,6 +249,38 @@ return new class extends Migration {
 
         $characteristics = $other->characteristicCategories()->create([
             'name' => 'Характеристики',
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'name',
+            'label'    => 'Название',
+            'sort'     => 0,
+            'type'     => Characteristic::TYPE_STRING,
+            'required' => true,
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'quadrature',
+            'label'    => 'Квадратура',
+            'sort'     => 1,
+            'type'     => Characteristic::TYPE_NUMBER,
+            'required' => true,
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'communication',
+            'label'    => 'Коммуникации',
+            'sort'     => 2,
+            'type'     => Characteristic::TYPE_STRING,
+            'required' => true,
+        ]);
+
+        $characteristics->characteristics()->create([
+            'name'     => 'status',
+            'label'    => 'Состояние',
+            'sort'     => 3,
+            'type'     => Characteristic::TYPE_NUMBER,
+            'required' => true,
         ]);
 
         $other->characteristicCategories()->create([

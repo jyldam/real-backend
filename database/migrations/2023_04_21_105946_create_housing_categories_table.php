@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 30);
             $table->string('mesh_name', 30);
+            $table->string('title', 255);
             $table->boolean('disabled')->index();
             $table->integer('sort');
             $table->json('preview_characteristics');

@@ -13,6 +13,7 @@ class HousingCategory extends Model
     protected $fillable = [
         'name',
         'mesh_name',
+        'title',
         'disabled',
         'sort',
         'preview_characteristics',

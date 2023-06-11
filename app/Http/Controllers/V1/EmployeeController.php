@@ -15,7 +15,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class EmployeeController extends Controller
 {
     public function __construct(
-        private readonly EmployeeService $employeeService
+        private readonly EmployeeService $employeeService,
     ) {}
 
     public function index(): AnonymousResourceCollection
@@ -39,6 +39,10 @@ class EmployeeController extends Controller
     public function store(EmployeeCreateData $data): JsonResponse
     {
         abort_if($data->type === Employee::TYPE_ADMIN, 403, 'Создание админа запрещено');
+        abort_if(
+            !employee()->isAdmin() && !employee()->isModerator(),
+            403,
+        );
         $this->employeeService->create($data);
         return response()->json('Сотрудник успешно создан');
     }
@@ -48,7 +52,15 @@ class EmployeeController extends Controller
      */
     public function update(EmployeeUpdateData $data, Employee $employee): JsonResponse
     {
-        abort_if($data->type === Employee::TYPE_ADMIN, 403, 'Создание админа запрещено');
+        abort_if(
+            $data->type === Employee::TYPE_ADMIN,
+            403,
+            'Создание админа запрещено',
+        );
+        abort_if(
+            $employee->id !== employee()->id && !employee()->isAdmin() && !employee()->isModerator(),
+            403,
+        );
         $this->employeeService->update($data, $employee);
         return response()->json('Сотрудник успешно обновлен');
     }
@@ -60,7 +72,7 @@ class EmployeeController extends Controller
             $authenticatedEmployee->id === $employee->id
             || !$authenticatedEmployee->isAdmin()
             || $employee->isAdmin(),
-            403
+            403,
         );
 
         $this->employeeService->delete($employee);

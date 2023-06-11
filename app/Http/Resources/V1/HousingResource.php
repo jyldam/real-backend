@@ -3,6 +3,7 @@
 namespace App\Http\Resources\V1;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Characteristic;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,9 +17,16 @@ class HousingResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $characteristics = [];
+
+        foreach ($this->characteristics as $characteristic) {
+            $characteristics["{{{$characteristic->name}}}"] = json_decode($characteristic->pivot->value);
+        }
+
         $values = [
             'id'              => $this->id,
-            'title'           => '3-комнатная квартира',
+            'title'           => Str::of($this->housingCategory->title)
+                ->replace(array_keys($characteristics), array_values($characteristics)),
             'assets'          => $this->housingAssets->map(fn($housingAsset) => [
                 'id'   => $housingAsset['id'],
                 'url'  => asset($housingAsset['url']),
