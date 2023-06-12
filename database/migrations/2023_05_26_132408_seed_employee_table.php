@@ -44,7 +44,7 @@ return new class extends Migration {
                 name: $employee[0],
                 email: $employee[2] ?? "test{$i}@realpvl.kz",
                 password: "re@l!{$employee[0]}",
-                type: Employee::TYPE_REALTOR,
+                type: $employee[3] ?? Employee::TYPE_REALTOR,
             ));
         }
     }
