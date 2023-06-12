@@ -43,7 +43,7 @@ return new class extends Migration {
                 phone: $employee[1],
                 name: $employee[0],
                 email: $employee[2] ?? "test{$i}@realpvl.kz",
-                password: "re@l!{$employee[0]}",
+                password: 're@l!' . cyrillic_to_latin($employee[0]),
                 type: $employee[3] ?? Employee::TYPE_REALTOR,
             ));
         }
