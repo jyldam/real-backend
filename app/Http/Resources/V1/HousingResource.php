@@ -83,7 +83,7 @@ class HousingResource extends JsonResource
         $formatted = @config('formatted-values')[mb_strtolower($categoryName)][strtolower($characteristicName)];
 
         if (is_numeric($characteristicValue) && $characteristicName !== 'year') {
-            $characteristicValue = number_format($characteristicValue, 0, '.', ' ');
+            $characteristicValue = rtrim(number_format($characteristicValue, 2, '.', ' '), '.0');
         }
 
         if (!$formatted) {

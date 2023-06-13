@@ -10,16 +10,12 @@ class HousingAsset extends Model
     use HasFactory;
 
     public const TYPE_REGULAR_IMAGE = 1;
-    public const TYPE_LAYOUT_IMAGE = 2;
+    public const TYPE_LAYOUT_IMAGE  = 2;
+    public const TYPE_VIDEO         = 3;
 
     protected $fillable = [
         'housing_id',
         'url',
         'type',
     ];
-
-    public static function allTypes()
-    {
-        return [self::TYPE_REGULAR_IMAGE, self::TYPE_LAYOUT_IMAGE];
-    }
 }
