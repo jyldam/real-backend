@@ -17,6 +17,7 @@ class HousingCategoryService
         if ($data && $data->withHousing) {
             $with['housings'] = fn($query) => $query->published()
                 ->when($data->givingType, fn($query) => $query->where('giving_type', $data->givingType))
+                ->latest()
                 ->limit(3);
         }
 
