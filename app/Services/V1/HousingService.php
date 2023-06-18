@@ -65,15 +65,15 @@ class HousingService
 
                         if (!is_array($value)) {
                             $value = explode(',', $value);
-                            $query->whereJsonContains('value', $value);
-                            for ($i = 1 ; $i < count($value) - 1 ; $i++) {
-                                $query->orWhereJsonContains('value', $value[$i]);
-                            }
-                            return;
+                            $query->where(fn(Builder $subQuery) => match ($key) {
+                                'rooms_count' => $this->filterRoomsCountCharacteristic($subQuery, $value),
+                                default       => $this->filterDefaultCharacteristic($subQuery, $value)
+                            });
+                            continue;
                         }
 
                         if (count($value) < 1) {
-                            return;
+                            continue;
                         }
 
                         $query->whereRaw("(value #>> '{}')::int >= ? and (value #>> '{}')::int <= ?", [
@@ -99,6 +99,38 @@ class HousingService
             )
             ->latest()
             ->paginate($data->perPage ?? 30);
+    }
+
+    private function filterRoomsCountCharacteristic(Builder $query, array $rooms): Builder
+    {
+        if (in_array('5+', $rooms)) {
+            for ($room = 1 ; $room < 5 ; $room++) {
+                if (in_array($room, $rooms)) {
+                    continue;
+                }
+                $query->whereJsonDoesntContain('value', (string)$room);
+            }
+
+            return $query;
+        }
+
+        for ($i = 0 ; $i < count($rooms) ; $i++) {
+            $i === 0
+                ? $query->whereJsonContains('value', $rooms[$i])
+                : $query->orWhereJsonContains('value', $rooms[$i]);
+        }
+
+        return $query;
+    }
+
+    private function filterDefaultCharacteristic(Builder $query, array $values): Builder
+    {
+        for ($i = 0 ; $i < count($values) ; $i++) {
+            $i === 0
+                ? $query->whereJsonContains('value', $values[$i])
+                : $query->orWhereJsonContains('value', $values[$i]);
+        }
+        return $query;
     }
 
     /**
