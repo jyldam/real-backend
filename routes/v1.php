@@ -8,7 +8,8 @@ Route::get('housing-category', 'HousingCategoryController@index');
 Route::get('housing-category/{category}', 'HousingCategoryController@show');
 
 Route::get('housing', 'HousingController@index');
-Route::get('housing/{housing}', 'HousingController@show');
+Route::get('housing/{housing}', 'HousingController@show')
+    ->middleware('can:view,housing');
 
 Route::get('giving-type', 'GivingTypeController@index');
 
@@ -39,9 +40,12 @@ Route::middleware('auth:api')
         Route::patch('housing/report/{housingReport}', 'HousingReportController@update');
         Route::delete('housing/report/{housingReport}', 'HousingReportController@destroy');
 
-        Route::post('housing', 'HousingController@store');
-        Route::patch('housing/{housing}', 'HousingController@update');
-        Route::delete('housing/{housing}', 'HousingController@destroy');
+        Route::post('housing', 'HousingController@store')
+            ->middleware('can:create,housing');
+        Route::patch('housing/{housing}', 'HousingController@update')
+            ->middleware('can:update,housing');
+        Route::delete('housing/{housing}', 'HousingController@destroy')
+            ->middleware('can:delete,housing');
 
         Route::get('call-back', 'CallBackController@index');
         Route::patch('call-back/{callBack}', 'CallBackController@update');
