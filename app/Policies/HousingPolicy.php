@@ -26,7 +26,7 @@ class HousingPolicy
      */
     public function create(User $user): bool
     {
-        return $user->employee;
+        return $user->employee->isAdmin() || $user->employee->isRealtor();
     }
 
     /**
