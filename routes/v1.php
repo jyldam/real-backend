@@ -32,16 +32,19 @@ Route::middleware('auth:api')
         Route::delete('login', 'AuthController@destroy');
         Route::get('me', 'AuthController@me');
 
-        Route::post('employee', 'EmployeeController@store');
-        Route::patch('employee/{employee}', 'EmployeeController@update');
-        Route::delete('employee/{employee}', 'EmployeeController@destroy');
+        Route::post('employee', 'EmployeeController@store')
+            ->middleware('can:create,App\Models\Employee');
+        Route::patch('employee/{employee}', 'EmployeeController@update')
+            ->middleware('can:update,employee');
+        Route::delete('employee/{employee}', 'EmployeeController@destroy')
+            ->middleware('can:delete,employee');
 
         Route::get('housing/report', 'HousingReportController@index');
         Route::patch('housing/report/{housingReport}', 'HousingReportController@update');
         Route::delete('housing/report/{housingReport}', 'HousingReportController@destroy');
 
         Route::post('housing', 'HousingController@store')
-            ->middleware('can:create,housing');
+            ->middleware('can:create,App\Models\Housing');
         Route::patch('housing/{housing}', 'HousingController@update')
             ->middleware('can:update,housing');
         Route::delete('housing/{housing}', 'HousingController@destroy')

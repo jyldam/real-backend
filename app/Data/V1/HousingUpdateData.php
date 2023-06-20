@@ -62,13 +62,6 @@ class HousingUpdateData extends Data
         public ?int $status,
     ) {}
 
-    public static function authorize(): bool
-    {
-        return employee()->isAdmin()
-            || employee()->isModerator()
-            || request('housing')->employee_id === employee()->id;
-    }
-
     public static function attributes(): array
     {
         return [

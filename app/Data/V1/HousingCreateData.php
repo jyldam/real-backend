@@ -56,11 +56,6 @@ class HousingCreateData extends Data
         public ?int $employeeId = null,
     ) {}
 
-    public static function authorize(): bool
-    {
-        return employee() && (employee()->isAdmin() || employee()->isRealtor());
-    }
-
     public static function attributes(): array
     {
         return [

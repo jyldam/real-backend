@@ -39,11 +39,6 @@ class EmployeeController extends Controller
      */
     public function store(EmployeeCreateData $data): JsonResponse
     {
-        abort_if($data->type === Employee::TYPE_ADMIN, 403, 'Создание админа запрещено');
-        abort_if(
-            !employee()->isAdmin() && !employee()->isModerator(),
-            403,
-        );
         $this->employeeService->create($data);
         return response()->json('Сотрудник успешно создан');
     }
@@ -53,29 +48,12 @@ class EmployeeController extends Controller
      */
     public function update(EmployeeUpdateData $data, Employee $employee): JsonResponse
     {
-        abort_if(
-            $data->type === Employee::TYPE_ADMIN,
-            403,
-            'Создание админа запрещено',
-        );
-        abort_if(
-            $employee->id !== employee()->id && !employee()->isAdmin() && !employee()->isModerator(),
-            403,
-        );
         $this->employeeService->update($data, $employee);
         return response()->json('Сотрудник успешно обновлен');
     }
 
     public function destroy(Employee $employee): JsonResponse
     {
-        $authenticatedEmployee = employee();
-        abort_if(
-            $authenticatedEmployee->id === $employee->id
-            || !$authenticatedEmployee->isAdmin()
-            || $employee->isAdmin(),
-            403,
-        );
-
         $this->employeeService->delete($employee);
         return response()->json('Сотрудник успешно удален');
     }

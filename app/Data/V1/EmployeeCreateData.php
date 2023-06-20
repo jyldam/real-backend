@@ -18,33 +18,28 @@ class EmployeeCreateData extends Data
         #[Min(10)]
         #[Max(10)]
         #[Unique('users', 'phone')]
-        public string        $phone,
+        public string $phone,
 
         #[Min(2)]
-        public string        $name,
+        public string $name,
 
         #[Email]
         #[Unique('users', 'email')]
-        public string        $email,
+        public string $email,
 
         #[Min(8)]
-        public string        $password,
+        public string $password,
 
         #[In(
             Employee::TYPE_ADMIN,
             Employee::TYPE_REALTOR,
             Employee::TYPE_MODERATOR
         )]
-        public int           $type,
+        public int $type,
 
         #[Image]
         public ?UploadedFile $avatar = null,
     ) {}
-
-    public static function authorize(): bool
-    {
-        return employee()->isAdmin();
-    }
 
     public static function attributes(): array
     {

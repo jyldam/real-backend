@@ -42,11 +42,6 @@ class EmployeeUpdateData extends Data
         public ?UploadedFile $avatar,
     ) {}
 
-    public static function authorize(): bool
-    {
-        return employee() && (employee()->isAdmin() || employee()->id === request('employee')->id);
-    }
-
     public static function attributes(): array
     {
         return [
