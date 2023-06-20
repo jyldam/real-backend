@@ -22,7 +22,7 @@ class EmployeeController extends Controller
     {
         $employees = Employee::query()
             ->with('user')
-            ->where('type', Employee::TYPE_REALTOR)
+            ->when(!auth()->check(), fn($query) => $query->where('type', Employee::TYPE_REALTOR))
             ->latest()
             ->paginate(request('per_page') ?: 30);
         return EmployeeResource::collection($employees);
